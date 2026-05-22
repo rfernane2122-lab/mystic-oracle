@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: mystic-oracle
+    runtime: python3
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: OPENCAGE_KEY
+        sync: false
+      - key: ANTHROPIC_KEY
+        sync: false
