@@ -3,428 +3,1867 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mystic Oracle</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Cinzel:wght@400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<title>Celeste — The Stars Remember Everything</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=IM+Fell+English:ital@0;1&family=Josefin+Sans:wght@200;300&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#080810;--surface:#0d0d1a;--surface2:#12121f;--border:rgba(160,140,255,0.12);--border2:rgba(160,140,255,0.25);--gold:#c9a84c;--gold2:#e8c97a;--purple:#9b87f5;--purple2:#c4b5fd;--muted:rgba(200,195,230,0.5);--text:#ede9f8;--dim:rgba(200,195,230,0.35);--teal:#5eead4;--coral:#f87171;}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'Cormorant Garamond',serif;min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 10%,rgba(120,80,255,0.08) 0%,transparent 60%),radial-gradient(ellipse 50% 30% at 80% 80%,rgba(80,160,200,0.06) 0%,transparent 50%);pointer-events:none;z-index:0}
-.stars{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-.star{position:absolute;border-radius:50%;background:white;animation:twinkle var(--dur) ease-in-out infinite}
-@keyframes twinkle{0%,100%{opacity:var(--min)}50%{opacity:var(--max)}}
-.app{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:2rem 1.5rem 4rem}
-header{text-align:center;padding:3rem 0 2rem;margin-bottom:2rem}
-.logo{font-size:48px;animation:float 6s ease-in-out infinite}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-header h1{font-family:'Cinzel',serif;font-size:clamp(28px,5vw,44px);font-weight:400;letter-spacing:0.15em;background:linear-gradient(135deg,var(--gold),var(--purple2),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:0.5rem}
-header p{font-size:15px;color:var(--muted);font-style:italic}
-.form-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem;margin-bottom:2rem}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-.form-group{display:flex;flex-direction:column;gap:0.4rem}
+/* ============================================================
+   ROOT & RESET
+   ============================================================ */
+:root {
+  --bg: #04040c;
+  --surface: #070714;
+  --surface2: #0b0b1e;
+  --gold: #c8a86b;
+  --gold-light: #e8d090;
+  --gold-dark: #9a7a3f;
+  --purple: #7b6fbe;
+  --teal: #6dbfad;
+  --coral: #d4806a;
+  --text: #f2ede4;
+  --muted: rgba(242,237,228,0.52);
+  --dim: rgba(242,237,228,0.28);
+  --border: rgba(200,168,107,0.13);
+  --border-md: rgba(200,168,107,0.32);
+  --s1:4px; --s2:8px; --s3:16px; --s4:24px;
+  --s5:40px; --s6:64px; --s7:96px; --s8:144px;
+  --font-display:'Playfair Display',Georgia,serif;
+  --font-body:'IM Fell English',Georgia,serif;
+  --font-ui:'Josefin Sans',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;overflow-x:hidden;cursor:none}
+
+/* ============================================================
+   CURSOR
+   ============================================================ */
+#cursor-dot{position:fixed;width:6px;height:6px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);will-change:transform}
+#cursor-ring{position:fixed;width:32px;height:32px;border:1px solid rgba(200,168,107,0.6);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);will-change:transform;transition:opacity 0.3s,border-color 0.3s,width 0.3s,height 0.3s}
+body.cursor-hover #cursor-ring{width:44px;height:44px;border-color:var(--gold-light);opacity:0.9}
+
+/* ============================================================
+   COSMOS CANVAS & FILM GRAIN
+   ============================================================ */
+#cosmos{position:fixed;inset:0;pointer-events:none;z-index:0}
+#grain{position:fixed;inset:0;pointer-events:none;z-index:1;opacity:0.038;width:100%;height:100%}
+
+/* ============================================================
+   NAV
+   ============================================================ */
+#nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:var(--s4) var(--s6);border-bottom:1px solid var(--border);background:rgba(4,4,12,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.nav-brand{font-family:var(--font-display);font-style:italic;font-size:22px;color:var(--gold-light);letter-spacing:0.04em;cursor:pointer;background:none;border:none;padding:0}
+.nav-links{display:flex;align-items:center;gap:var(--s5);list-style:none}
+.nav-links a{font-family:var(--font-ui);font-weight:300;font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.3s;cursor:pointer;background:none;border:none;padding:0}
+.nav-links a:hover,.nav-links a.active{color:var(--gold)}
+.nav-hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:var(--s1)}
+.nav-hamburger span{display:block;width:22px;height:1px;background:var(--gold);transition:opacity 0.3s}
+
+/* ============================================================
+   PAGE SYSTEM
+   ============================================================ */
+#main{position:relative;z-index:2;min-height:100vh}
+.page{display:none}
+.page.active{display:block;animation:pageIn 0.45s ease both}
+@keyframes pageIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+#page-home{padding-top:88px}
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;max-width:1500px;margin:0 auto;padding:var(--s7) var(--s6) var(--s6);min-height:calc(100vh - 88px)}
+.hero-left{max-width:580px}
+.hero-eyebrow{font-family:var(--font-ui);font-weight:200;font-size:9px;letter-spacing:0.5em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:var(--s5);opacity:0;animation:fadeUp 0.6s ease forwards 0.2s}
+.hero-title{font-family:var(--font-display);font-style:italic;font-size:clamp(52px,6.5vw,92px);line-height:0.93;color:var(--text);margin-bottom:var(--s5);opacity:0;animation:fadeUp 0.6s ease forwards 0.4s}
+.hero-title em{color:var(--gold-light)}
+.hero-sub{font-family:var(--font-body);font-style:italic;font-size:17px;color:var(--muted);line-height:1.85;max-width:440px;margin-bottom:var(--s5);opacity:0;animation:fadeUp 0.6s ease forwards 0.6s}
+.hero-cta{display:flex;gap:var(--s3);flex-wrap:wrap;opacity:0;animation:fadeUp 0.6s ease forwards 0.8s}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn-primary{font-family:var(--font-ui);font-weight:300;font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:var(--bg);background:linear-gradient(135deg,var(--gold),var(--gold-dark));border:none;padding:var(--s3) var(--s5);cursor:pointer;position:relative;overflow:hidden;transition:color 0.4s}
+.btn-primary::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--gold-light),var(--gold));transform:scaleX(0);transform-origin:left;transition:transform 0.4s ease}
+.btn-primary:hover::before{transform:scaleX(1)}
+.btn-primary span{position:relative;z-index:1}
+.btn-outline{font-family:var(--font-ui);font-weight:300;font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:var(--gold);background:none;border:1px solid var(--border-md);padding:var(--s3) var(--s5);cursor:pointer;transition:border-color 0.3s,color 0.3s}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold-light)}
+.btn-submit{font-family:var(--font-ui);font-weight:300;font-size:10px;letter-spacing:0.35em;text-transform:uppercase;color:var(--bg);background:linear-gradient(135deg,var(--gold),var(--gold-dark));border:none;padding:var(--s3) var(--s5);cursor:pointer;position:relative;overflow:hidden;margin-top:var(--s5);display:block;width:100%;transition:opacity 0.3s}
+.btn-submit:hover{opacity:0.88}
+.btn-submit:disabled{opacity:0.4;cursor:not-allowed}
+
+/* ============================================================
+   ZODIAC WHEEL
+   ============================================================ */
+.hero-right{display:flex;align-items:center;justify-content:center}
+.wheel-wrap{position:relative;width:520px;height:520px;flex-shrink:0}
+.wheel-ring{position:absolute;border-radius:50%;border:1px solid var(--border);pointer-events:none}
+.ring-outer{inset:0;animation:spinCW 140s linear infinite}
+.ring-mid{inset:15%;border-color:rgba(200,168,107,0.07);animation:spinCCW 90s linear infinite}
+.ring-inner{inset:30%;border-color:rgba(200,168,107,0.1)}
+@keyframes spinCW{to{transform:rotate(360deg)}}
+@keyframes spinCCW{to{transform:rotate(-360deg)}}
+.wheel-center{position:absolute;top:50%;left:50%;width:164px;height:164px;transform:translate(-50%,-50%);border-radius:50%;border:1px solid var(--border-md);background:rgba(4,4,12,0.7);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:var(--s3);overflow:hidden}
+.wc-default{font-family:var(--font-body);font-style:italic;font-size:11px;color:var(--dim);line-height:1.65;transition:opacity 0.35s}
+.wc-sign{display:none;flex-direction:column;align-items:center;gap:var(--s1);transition:opacity 0.35s}
+.wc-sign.show{display:flex}
+.wcs-name{font-family:var(--font-display);font-style:italic;font-size:16px;color:var(--gold-light)}
+.wcs-dates{font-family:var(--font-ui);font-size:7px;letter-spacing:0.3em;text-transform:uppercase;color:var(--dim)}
+.sign-btn{position:absolute;width:50px;height:50px;border-radius:50%;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;transform:translate(-50%,-50%);transition:border-color 0.3s,box-shadow 0.3s,color 0.3s;color:var(--gold-dark);z-index:2;padding:0}
+.sign-btn:hover,.sign-btn.active{border-color:var(--gold);box-shadow:0 0 20px rgba(200,168,107,0.3);color:var(--gold-light)}
+.sign-btn svg{pointer-events:none}
+
+/* ============================================================
+   SIGN INFO PANEL
+   ============================================================ */
+.sign-panel-wrap{max-width:1500px;margin:0 auto;padding:0 var(--s6) var(--s6)}
+.sign-panel{max-width:900px;border:1px solid var(--border);background:var(--surface);padding:var(--s5);display:none;animation:pageIn 0.45s ease both}
+.sign-panel.show{display:block}
+.sp-tag{font-family:var(--font-ui);font-size:8px;letter-spacing:0.4em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:var(--s2)}
+.sp-name{font-family:var(--font-display);font-style:italic;font-size:32px;color:var(--gold-light);margin-bottom:var(--s1)}
+.sp-dates{font-family:var(--font-ui);font-size:9px;letter-spacing:0.3em;color:var(--dim);margin-bottom:var(--s3)}
+.sp-ruler{font-family:var(--font-body);font-style:italic;font-size:13px;color:var(--muted);margin-bottom:var(--s3)}
+.sp-traits{display:flex;gap:var(--s2);flex-wrap:wrap;margin-bottom:var(--s3)}
+.sp-trait{font-family:var(--font-ui);font-size:8px;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold-dark);border:1px solid var(--border);padding:var(--s1) var(--s2)}
+.sp-essence{font-family:var(--font-body);font-style:italic;font-size:15px;line-height:1.85;color:var(--muted);margin-bottom:var(--s3)}
+.sp-link{font-family:var(--font-ui);font-size:8px;letter-spacing:0.35em;text-transform:uppercase;color:var(--gold-dark);cursor:pointer;transition:color 0.3s;background:none;border:none;padding:0}
+.sp-link:hover{color:var(--gold)}
+
+/* ============================================================
+   SERVICE STRIP
+   ============================================================ */
+.service-strip{max-width:1500px;margin:0 auto;padding:0 var(--s6) var(--s8);display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--border)}
+.svc-card{padding:var(--s5) var(--s4);border-right:1px solid var(--border);cursor:pointer;position:relative;overflow:hidden;transition:background 0.3s}
+.svc-card:last-child{border-right:none}
+.svc-card::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:1px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform 0.4s ease-out}
+.svc-card:hover{background:rgba(200,168,107,0.04)}
+.svc-card:hover::after{transform:scaleX(1)}
+.svc-icon{color:var(--gold-dark);margin-bottom:var(--s3)}
+.svc-title{font-family:var(--font-display);font-style:italic;font-size:17px;color:var(--text);margin-bottom:var(--s2)}
+.svc-sub{font-family:var(--font-ui);font-weight:200;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--dim)}
+
+/* ============================================================
+   SHARED PAGE LAYOUT
+   ============================================================ */
+.page-inner{max-width:1100px;margin:0 auto;padding:calc(var(--s7) + 88px) var(--s6) var(--s8)}
+.page-eyebrow{font-family:var(--font-ui);font-weight:200;font-size:9px;letter-spacing:0.5em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:var(--s4)}
+.page-title{font-family:var(--font-display);font-style:italic;font-size:clamp(40px,5vw,64px);line-height:1.05;color:var(--text);margin-bottom:var(--s5)}
+.page-divider{height:1px;background:var(--border);margin:var(--s5) 0}
+
+/* ============================================================
+   FORMS
+   ============================================================ */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3)}
+.form-group{display:flex;flex-direction:column;gap:var(--s1)}
 .form-group.full{grid-column:1/-1}
-label{font-size:11px;letter-spacing:0.12em;color:var(--muted);font-family:'Cinzel',serif;text-transform:uppercase}
-input,select{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Cormorant Garamond',serif;font-size:16px;padding:0.7rem 1rem;outline:none;transition:border-color 0.2s;width:100%}
-input:focus{border-color:var(--border2)}
-input::placeholder{color:var(--dim)}
+label{font-family:var(--font-ui);font-weight:300;font-size:9px;letter-spacing:0.35em;text-transform:uppercase;color:var(--dim)}
+input,select,textarea{background:var(--surface);border:1px solid var(--border);color:var(--text);font-family:var(--font-body);font-style:italic;font-size:15px;padding:var(--s3);outline:none;transition:border-color 0.3s;width:100%;-webkit-appearance:none;appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--border-md)}
+input::placeholder,textarea::placeholder{color:var(--dim);font-style:italic}
+select option{background:var(--surface2);color:var(--text)}
+textarea{resize:vertical;min-height:80px}
 .city-wrap{position:relative}
-.suggestions{display:none;position:absolute;top:100%;left:0;right:0;background:var(--surface2);border:1px solid var(--border2);border-top:none;border-radius:0 0 8px 8px;z-index:100;max-height:220px;overflow-y:auto}
-.sug-item{padding:0.65rem 1rem;font-size:14px;cursor:pointer;color:var(--text);border-bottom:1px solid var(--border);transition:background 0.15s}
+.suggestions-box{display:none;position:absolute;top:calc(100% + 2px);left:0;right:0;background:var(--surface2);border:1px solid var(--border-md);z-index:300;max-height:220px;overflow-y:auto}
+.sug-item{padding:var(--s2) var(--s3);font-family:var(--font-body);font-style:italic;font-size:14px;color:var(--text);cursor:pointer;border-bottom:1px solid var(--border);transition:background 0.15s,color 0.15s}
 .sug-item:last-child{border-bottom:none}
-.sug-item:hover,.sug-item.hi{background:rgba(155,135,245,0.12);color:var(--purple2)}
-.city-status{font-size:12px;color:var(--muted);margin-top:4px;font-style:italic;min-height:16px}
-.city-ok{color:var(--teal)!important}
-.city-err{color:var(--coral)!important}
-.btn{width:100%;padding:1rem;margin-top:1.5rem;background:linear-gradient(135deg,rgba(155,135,245,0.2),rgba(201,168,76,0.15));border:1px solid var(--border2);border-radius:10px;color:var(--gold2);font-family:'Cinzel',serif;font-size:13px;letter-spacing:0.15em;cursor:pointer;transition:all 0.3s}
-.btn:hover{background:linear-gradient(135deg,rgba(155,135,245,0.3),rgba(201,168,76,0.25))}
-.btn:disabled{opacity:0.4;cursor:not-allowed}
-.results{display:none;animation:fadeIn 0.5s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.sys-tabs{display:flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap}
-.sys-tab{padding:0.4rem 1rem;border:1px solid var(--border);border-radius:20px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.1em;color:var(--dim);cursor:pointer;background:transparent;transition:all 0.2s}
-.sys-tab.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,0.08)}
-.sys-tab:hover:not(.active){color:var(--text);border-color:var(--border2)}
-.panel{display:none}
-.panel.active{display:block}
-.section{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.75rem;margin-bottom:1.25rem}
-.sec-title{font-family:'Cinzel',serif;font-size:12px;letter-spacing:0.15em;color:var(--gold);margin-bottom:1.25rem;display:flex;align-items:center;gap:10px}
-.sec-title::after{content:'';flex:1;height:1px;background:var(--border)}
-.planet-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0.6rem}
-.planet-row{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.6rem 0.85rem;display:flex;align-items:center;gap:10px}
-.p-glyph{font-size:18px;width:24px;text-align:center;flex-shrink:0}
-.p-name{font-size:12px;color:var(--muted);width:72px;flex-shrink:0;font-family:'DM Mono',monospace}
-.p-pos{font-size:15px;font-weight:300}
-.p-house{font-size:11px;color:var(--dim);margin-left:auto;font-family:'DM Mono',monospace}
-.bal-row{margin-bottom:0.5rem;display:flex;align-items:center;gap:10px}
-.bal-label{width:50px;font-size:10px;color:var(--muted);font-family:'Cinzel',serif;letter-spacing:0.08em}
-.bal-track{flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
-.bal-fill{height:100%;border-radius:3px}
-.bal-count{width:20px;text-align:right;font-size:12px;color:var(--dim);font-family:'DM Mono',monospace}
-.big3{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.5rem}
-.big3-card{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:0.75rem 1.25rem;font-size:16px;color:var(--gold2)}
-.nak-box{background:linear-gradient(135deg,rgba(155,135,245,0.08),rgba(94,234,212,0.05));border:1px solid var(--border2);border-radius:10px;padding:1.25rem;margin-bottom:1rem}
-.nak-name{font-size:22px;font-weight:300;color:var(--purple2);margin-bottom:4px}
-.nak-meta{font-size:13px;color:var(--muted)}
-.pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem}
-.pillar{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center}
-.pillar-lbl{font-size:10px;color:var(--dim);letter-spacing:0.1em;font-family:'Cinzel',serif;margin-bottom:8px;text-transform:uppercase}
-.pillar-stem{font-size:18px;font-weight:300;color:var(--gold2);line-height:1.2}
-.pillar-branch{font-size:13px;color:var(--muted);margin-top:4px}
-.lp-num{font-family:'Cinzel',serif;font-size:56px;font-weight:400;background:linear-gradient(135deg,var(--gold),var(--purple2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;margin:0.5rem 0}
-.lp-label{text-align:center;font-size:16px;font-style:italic;color:var(--muted)}
-.ai-section{background:linear-gradient(135deg,rgba(155,135,245,0.06),rgba(201,168,76,0.04));border:1px solid var(--border2);border-radius:16px;padding:2rem;margin-top:1.25rem}
-.ai-loading{text-align:center;padding:2rem;color:var(--muted);font-style:italic}
-.ai-text{font-size:17px;line-height:1.85;color:var(--text);white-space:pre-wrap;font-weight:300}
-.chat-msgs{display:flex;flex-direction:column;gap:1rem;margin-bottom:1rem;max-height:400px;overflow-y:auto;padding:1rem;background:var(--surface2);border-radius:10px;border:1px solid var(--border)}
-.msg-o{align-self:flex-start;max-width:85%}
-.msg-u{align-self:flex-end;max-width:80%}
-.bubble{padding:0.85rem 1.1rem;border-radius:12px;font-size:15px;line-height:1.7}
-.b-o{background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:4px}
-.b-u{background:rgba(155,135,245,0.2);border:1px solid var(--border2);border-bottom-right-radius:4px;text-align:right}
-.chat-row{display:flex;gap:0.75rem}
-.chat-row input{flex:1}
-.chat-send{padding:0.7rem 1.25rem;background:rgba(155,135,245,0.15);border:1px solid var(--border2);border-radius:8px;color:var(--purple2);font-family:'Cinzel',serif;font-size:11px;cursor:pointer;letter-spacing:0.08em;transition:all 0.2s;white-space:nowrap}
-.chat-send:hover{background:rgba(155,135,245,0.25)}
-.chat-send:disabled{opacity:0.4;cursor:not-allowed}
-.dots{display:inline-flex;gap:3px;align-items:center}
-.dot{width:5px;height:5px;border-radius:50%;background:var(--muted);animation:blink 1.2s infinite}
-.dot:nth-child(2){animation-delay:0.2s}.dot:nth-child(3){animation-delay:0.4s}
-@keyframes blink{0%,80%,100%{opacity:0.2}40%{opacity:1}}
-@media(max-width:600px){.form-grid{grid-template-columns:1fr}.pillars{grid-template-columns:repeat(2,1fr)}.planet-grid{grid-template-columns:1fr}}
+.sug-item:hover,.sug-item.hi{background:rgba(200,168,107,0.08);color:var(--gold-light)}
+.city-status{font-family:var(--font-ui);font-size:9px;letter-spacing:0.2em;color:var(--dim);margin-top:var(--s1);min-height:14px}
+.city-status.ok{color:var(--teal)}
+.city-status.err{color:var(--coral)}
+
+/* ============================================================
+   RESULTS
+   ============================================================ */
+.results-section{display:none;margin-top:var(--s6)}
+.results-section.show{display:block}
+.r-block{border:1px solid var(--border);background:var(--surface);padding:var(--s5);margin-bottom:var(--s4)}
+.r-label{font-family:var(--font-ui);font-weight:300;font-size:9px;letter-spacing:0.4em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:var(--s4)}
+.big3-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s3);margin-bottom:var(--s5)}
+.big3-card{border:1px solid var(--border-md);background:var(--surface2);padding:var(--s4) var(--s3);text-align:center}
+.b3-planet{font-family:var(--font-ui);font-size:8px;letter-spacing:0.35em;text-transform:uppercase;color:var(--dim);margin-bottom:var(--s2)}
+.b3-symbol{margin-bottom:var(--s2);color:var(--gold)}
+.b3-sign{font-family:var(--font-display);font-style:italic;font-size:22px;color:var(--gold-light)}
+.elements-chart{display:flex;flex-direction:column;gap:var(--s2);margin-bottom:var(--s5)}
+.el-row{display:flex;align-items:center;gap:var(--s3)}
+.el-label{font-family:var(--font-ui);font-size:8px;letter-spacing:0.25em;text-transform:uppercase;width:52px;color:var(--dim)}
+.el-track{flex:1;height:4px;background:rgba(200,168,107,0.1)}
+.el-fill{height:100%;transition:width 1s ease}
+.el-count{font-family:var(--font-ui);font-size:9px;color:var(--dim);width:16px;text-align:right}
+.planet-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:var(--s2)}
+.planet-row{display:flex;align-items:center;gap:var(--s3);background:var(--surface2);border:1px solid var(--border);padding:var(--s2) var(--s3)}
+.p-glyph{color:var(--gold-dark);width:16px;flex-shrink:0}
+.p-name{font-family:var(--font-ui);font-size:8px;letter-spacing:0.2em;text-transform:uppercase;color:var(--dim);width:72px;flex-shrink:0}
+.p-pos{font-family:var(--font-body);font-style:italic;font-size:14px;color:var(--text);flex:1}
+.p-house{font-family:var(--font-ui);font-size:8px;color:var(--dim);letter-spacing:0.15em}
+.vedic-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s3)}
+.vedic-card{background:var(--surface2);border:1px solid var(--border);padding:var(--s4)}
+.vc-label{font-family:var(--font-ui);font-size:8px;letter-spacing:0.35em;text-transform:uppercase;color:var(--dim);margin-bottom:var(--s2)}
+.vc-value{font-family:var(--font-display);font-style:italic;font-size:20px;color:var(--gold-light)}
+.vc-sub{font-family:var(--font-ui);font-size:9px;color:var(--dim);margin-top:var(--s1);letter-spacing:0.15em}
+.pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s3)}
+.pillar{background:var(--surface2);border:1px solid var(--border);padding:var(--s4) var(--s3);text-align:center}
+.pillar-lbl{font-family:var(--font-ui);font-size:8px;letter-spacing:0.3em;text-transform:uppercase;color:var(--dim);margin-bottom:var(--s2)}
+.pillar-stem{font-family:var(--font-display);font-style:italic;font-size:18px;color:var(--gold-light);line-height:1.2}
+.pillar-branch{font-family:var(--font-body);font-style:italic;font-size:13px;color:var(--muted);margin-top:var(--s1)}
+.num-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s3);margin-bottom:var(--s5)}
+.num-card{background:var(--surface2);border:1px solid var(--border);padding:var(--s5) var(--s4);text-align:center}
+.nc-label{font-family:var(--font-ui);font-size:8px;letter-spacing:0.4em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:var(--s3)}
+.nc-number{font-family:var(--font-display);font-style:italic;font-size:56px;color:var(--gold);line-height:1;margin-bottom:var(--s2)}
+.nc-desc{font-family:var(--font-body);font-style:italic;font-size:13px;color:var(--muted)}
+
+/* ============================================================
+   AI ORACLE BLOCK
+   ============================================================ */
+.ai-block{border:1px solid var(--border);background:var(--surface);padding:var(--s5);margin-top:var(--s4);position:relative}
+.ai-block::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold-dark),transparent)}
+.ai-label{font-family:var(--font-ui);font-size:8px;letter-spacing:0.5em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:var(--s5)}
+.ai-text{font-family:var(--font-body);font-style:italic;font-size:17px;line-height:2;color:var(--text)}
+.ai-text p{margin-bottom:var(--s5)}
+.ai-text p:last-child{margin-bottom:0}
+.ai-loading{display:flex;flex-direction:column;align-items:center;gap:var(--s3);padding:var(--s6) 0}
+.ai-spinner{color:var(--gold);animation:spinFull 6s linear infinite}
+@keyframes spinFull{to{transform:rotate(360deg)}}
+.ai-loading-txt{font-family:var(--font-body);font-style:italic;font-size:14px;color:var(--dim)}
+.dots-loading{display:inline-flex;gap:3px;align-items:center}
+.dl{width:5px;height:5px;border-radius:50%;background:var(--dim);animation:blink 1.2s infinite}
+.dl:nth-child(2){animation-delay:.2s}.dl:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.2}40%{opacity:1}}
+
+/* ============================================================
+   CHAT
+   ============================================================ */
+.chat-block{border:1px solid var(--border);background:var(--surface);padding:var(--s5);margin-top:var(--s4)}
+.chat-label{font-family:var(--font-ui);font-size:8px;letter-spacing:0.5em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:var(--s4)}
+.chat-msgs{display:flex;flex-direction:column;gap:var(--s3);max-height:380px;overflow-y:auto;margin-bottom:var(--s4);padding-right:var(--s1)}
+.msg-user{align-self:flex-end;max-width:78%}
+.msg-oracle{align-self:flex-start;max-width:85%}
+.bubble{padding:var(--s3) var(--s4);font-family:var(--font-body);font-size:15px;line-height:1.75}
+.bubble-user{background:rgba(200,168,107,0.1);border:1px solid var(--border-md);color:var(--text);text-align:right}
+.bubble-oracle{background:var(--surface2);border:1px solid var(--border);font-style:italic;color:var(--text)}
+.chat-input-row{display:flex;gap:var(--s2)}
+.chat-input-row input{flex:1}
+.chat-send{font-family:var(--font-ui);font-weight:300;font-size:9px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);background:none;border:1px solid var(--border-md);padding:var(--s3) var(--s4);cursor:pointer;transition:border-color 0.3s,color 0.3s;white-space:nowrap}
+.chat-send:hover{border-color:var(--gold);color:var(--gold-light)}
+.chat-send:disabled{opacity:.4;cursor:not-allowed}
+
+/* ============================================================
+   TAROT
+   ============================================================ */
+.spread-selector{display:flex;gap:var(--s2);margin-bottom:var(--s5);flex-wrap:wrap}
+.spread-btn{font-family:var(--font-ui);font-weight:300;font-size:9px;letter-spacing:0.25em;text-transform:uppercase;color:var(--dim);border:1px solid var(--border);background:none;padding:var(--s2) var(--s4);cursor:pointer;transition:all 0.25s}
+.spread-btn.active,.spread-btn:hover{border-color:var(--gold);color:var(--gold)}
+.tarot-spread{display:flex;gap:var(--s4);flex-wrap:wrap;margin-bottom:var(--s5);justify-content:center}
+.tarot-card{width:108px;height:168px;background:linear-gradient(160deg,var(--surface2),var(--bg));border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:var(--s3) var(--s2);transition:transform 0.4s ease,box-shadow 0.4s ease,border-color 0.4s ease;opacity:0;transform:translateY(20px)}
+.tarot-card.show{opacity:1;transform:translateY(0);transition:opacity 0.5s ease,transform 0.5s ease,box-shadow 0.4s ease,border-color 0.4s ease}
+.tarot-card:hover{transform:translateY(-8px)!important;box-shadow:0 16px 40px rgba(200,168,107,0.18);border-color:var(--border-md)}
+.tc-position{font-family:var(--font-ui);font-size:7px;letter-spacing:0.3em;text-transform:uppercase;color:var(--dim);align-self:flex-start}
+.tc-glyph{color:var(--gold-dark);flex:1;display:flex;align-items:center;justify-content:center}
+.tc-name{font-family:var(--font-ui);font-size:7px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold-dark);text-align:center;line-height:1.4}
+.tc-reversed{font-family:var(--font-body);font-style:italic;font-size:9px;color:var(--coral);text-align:center}
+
+/* ============================================================
+   COMPATIBILITY
+   ============================================================ */
+.compat-forms{display:grid;grid-template-columns:1fr 1fr;gap:var(--s5);margin-bottom:var(--s5)}
+.compat-form-label{font-family:var(--font-display);font-style:italic;font-size:18px;color:var(--gold-dark);margin-bottom:var(--s4)}
+.compat-score-wrap{text-align:center;padding:var(--s6) 0;margin-bottom:var(--s5)}
+.compat-score{font-family:var(--font-display);font-style:italic;font-size:96px;color:var(--gold);line-height:1;display:block}
+.compat-score-label{font-family:var(--font-body);font-style:italic;font-size:18px;color:var(--muted);margin-top:var(--s2)}
+
+/* ============================================================
+   SIGN DETAIL PAGE
+   ============================================================ */
+.sign-detail-inner{max-width:1100px;margin:0 auto;padding:calc(var(--s6) + 88px) var(--s6) var(--s8)}
+.back-link{font-family:var(--font-ui);font-size:8px;letter-spacing:0.4em;text-transform:uppercase;color:var(--gold-dark);cursor:pointer;display:inline-flex;align-items:center;gap:var(--s2);margin-bottom:var(--s5);transition:color 0.3s;background:none;border:none;padding:0}
+.back-link:hover{color:var(--gold)}
+.sd-hero{display:grid;grid-template-columns:160px 1fr;gap:var(--s6);align-items:center;margin-bottom:var(--s5)}
+.sd-glyph-circle{width:140px;height:140px;border-radius:50%;border:1px solid var(--border-md);display:flex;align-items:center;justify-content:center;color:var(--gold);background:var(--surface)}
+.sd-name{font-family:var(--font-display);font-style:italic;font-size:clamp(44px,5vw,56px);color:var(--text);line-height:1.1}
+.sd-tag{font-family:var(--font-ui);font-size:8px;letter-spacing:0.4em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:var(--s2)}
+.sd-dates{font-family:var(--font-ui);font-size:9px;letter-spacing:0.3em;color:var(--dim);margin-bottom:var(--s2)}
+.sd-ruler{font-family:var(--font-body);font-style:italic;font-size:14px;color:var(--muted);margin-bottom:var(--s3)}
+.sd-traits{display:flex;gap:var(--s2);flex-wrap:wrap}
+.sd-trait{font-family:var(--font-ui);font-size:8px;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold-dark);border:1px solid var(--border);padding:var(--s1) var(--s2)}
+.sd-divider{height:1px;background:var(--border);margin-bottom:var(--s5)}
+.sd-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);margin-bottom:var(--s4)}
+.sd-block{background:var(--surface);border:1px solid var(--border);padding:var(--s5)}
+.sd-block-title{font-family:var(--font-ui);font-size:8px;letter-spacing:0.4em;text-transform:uppercase;color:var(--gold-dark);margin-bottom:var(--s4)}
+.sd-block-text{font-family:var(--font-body);font-style:italic;font-size:15px;line-height:1.85;color:var(--muted)}
+.compat-tags{display:flex;flex-wrap:wrap;gap:var(--s2)}
+.compat-tag{font-family:var(--font-ui);font-size:8px;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);border:1px solid var(--border);padding:var(--s1) var(--s2);cursor:pointer;transition:border-color 0.25s,color 0.25s;background:none}
+.compat-tag:hover{border-color:var(--gold);color:var(--gold-light)}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media(max-width:1100px){
+  .hero{grid-template-columns:1fr;gap:var(--s6);min-height:auto;padding-bottom:var(--s6)}
+  .hero-right{order:-1}
+  .wheel-wrap{width:400px;height:400px}
+  .service-strip{grid-template-columns:repeat(3,1fr)}
+  .svc-card:nth-child(3){border-right:none}
+  .svc-card:nth-child(4),.svc-card:nth-child(5){border-top:1px solid var(--border)}
+}
+@media(max-width:768px){
+  #nav{padding:var(--s3) var(--s4)}
+  .nav-links{display:none;position:fixed;top:57px;left:0;right:0;background:rgba(4,4,12,.97);flex-direction:column;padding:var(--s4);gap:var(--s4);border-bottom:1px solid var(--border);z-index:499}
+  .nav-links.open{display:flex}
+  .nav-hamburger{display:flex}
+  .hero{padding:var(--s6) var(--s4) var(--s4);gap:var(--s4)}
+  .wheel-wrap{width:320px;height:320px}
+  .service-strip{grid-template-columns:1fr 1fr;border-top:1px solid var(--border)}
+  .svc-card{border-right:none;border-bottom:1px solid var(--border)}
+  .form-grid{grid-template-columns:1fr}
+  .big3-grid{grid-template-columns:1fr}
+  .num-cards{grid-template-columns:1fr}
+  .pillars{grid-template-columns:repeat(2,1fr)}
+  .vedic-grid{grid-template-columns:1fr}
+  .compat-forms{grid-template-columns:1fr}
+  .sd-hero{grid-template-columns:1fr}
+  .sd-grid{grid-template-columns:1fr}
+  .page-inner{padding:calc(var(--s6) + 88px) var(--s4) var(--s6)}
+  .sign-panel-wrap{padding:0 var(--s4) var(--s4)}
+  .sign-panel{padding:var(--s4)}
+  .compat-score{font-size:72px}
+  .sign-detail-inner{padding:calc(var(--s6) + 88px) var(--s4) var(--s6)}
+}
+@media(max-width:480px){
+  .wheel-wrap{width:290px;height:290px}
+  .service-strip{grid-template-columns:1fr}
+  .tarot-spread{gap:var(--s2)}
+}
 </style>
 </head>
 <body>
-<div class="stars" id="stars"></div>
-<div class="app">
-  <header>
-    <div class="logo">✦</div>
-    <h1>Mystic Oracle</h1>
-    <p>Western · Vedic · Bazi · Saju · Numerology</p>
-  </header>
 
-  <div class="form-card">
-    <div class="form-grid">
-      <div class="form-group full">
-        <label>Your Name (optional)</label>
-        <input type="text" id="name" placeholder="For numerology reading">
-      </div>
-      <div class="form-group">
-        <label>Date of Birth</label>
-        <input type="date" id="birth-date" value="1990-03-15">
-      </div>
-      <div class="form-group">
-        <label>Time of Birth (local time)</label>
-        <input type="time" id="birth-time" value="14:30">
-      </div>
-      <div class="form-group full">
-        <label>City of Birth</label>
-        <div class="city-wrap">
-          <input type="text" id="city-input" placeholder="Type any city in the world..." autocomplete="off" oninput="onCityInput()" onkeydown="onCityKey(event)">
-          <div class="suggestions" id="suggestions"></div>
-        </div>
-        <div class="city-status" id="city-status"></div>
-        <input type="hidden" id="lat">
-        <input type="hidden" id="lon">
+<!-- Cursor -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- Film grain -->
+<svg id="grain" xmlns="http://www.w3.org/2000/svg">
+  <filter id="gf" x="0%" y="0%" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
+    <feColorMatrix type="saturate" values="0"/>
+  </filter>
+  <rect width="100%" height="100%" filter="url(#gf)"/>
+</svg>
+
+<!-- Cosmos -->
+<canvas id="cosmos"></canvas>
+
+<!-- Nav -->
+<nav id="nav">
+  <button class="nav-brand" onclick="navigate('home')">Celeste</button>
+  <ul class="nav-links" id="nav-links">
+    <li><a onclick="navigate('horoscope')">Daily Oracle</a></li>
+    <li><a onclick="navigate('chart')">Birth Chart</a></li>
+    <li><a onclick="navigate('tarot')">Tarot</a></li>
+    <li><a onclick="navigate('compatibility')">Synastry</a></li>
+    <li><a onclick="navigate('numerology')">Numerology</a></li>
+  </ul>
+  <button class="nav-hamburger" id="hamburger" onclick="toggleNav()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Main -->
+<div id="main">
+
+<!-- ═══════════ HOME PAGE ═══════════ -->
+<div class="page active" id="page-home">
+  <section class="hero">
+    <div class="hero-left">
+      <p class="hero-eyebrow">Ancient Wisdom · Modern Oracle</p>
+      <h1 class="hero-title">The Stars<br><em>Remember</em><br>Everything</h1>
+      <p class="hero-sub">A synthesis of five astrological traditions — Western, Vedic, Bazi, Saju, and Numerology — woven into one living portrait of your soul.</p>
+      <div class="hero-cta">
+        <button class="btn-primary" onclick="navigate('chart')"><span>Reveal My Chart</span></button>
+        <button class="btn-outline" onclick="navigate('horoscope')">Today's Oracle</button>
       </div>
     </div>
-    <button class="btn" id="calc-btn" onclick="calcChart()">✦ REVEAL MY COSMIC BLUEPRINT ✦</button>
+    <div class="hero-right">
+      <div class="wheel-wrap" id="wheel-wrap">
+        <div class="wheel-ring ring-outer"></div>
+        <div class="wheel-ring ring-mid"></div>
+        <div class="wheel-ring ring-inner"></div>
+        <div class="wheel-center" id="wheel-center">
+          <p class="wc-default" id="wc-default">Hover any sign to discover its essence</p>
+          <div class="wc-sign" id="wc-sign">
+            <div id="wcs-glyph"></div>
+            <div class="wcs-name" id="wcs-name"></div>
+            <div class="wcs-dates" id="wcs-dates"></div>
+          </div>
+        </div>
+        <!-- Sign buttons inserted by JS -->
+      </div>
+    </div>
+  </section>
+
+  <div class="sign-panel-wrap">
+    <div class="sign-panel" id="sign-panel">
+      <p class="sp-tag" id="sp-tag"></p>
+      <h2 class="sp-name" id="sp-name"></h2>
+      <p class="sp-dates" id="sp-dates"></p>
+      <p class="sp-ruler" id="sp-ruler"></p>
+      <div class="sp-traits" id="sp-traits"></div>
+      <p class="sp-essence" id="sp-essence"></p>
+      <button class="sp-link" id="sp-link">Explore this sign in depth</button>
+    </div>
   </div>
 
-  <div class="results" id="results">
-    <div class="sys-tabs">
-      <button class="sys-tab active" onclick="showPanel('western',this)">Western</button>
-      <button class="sys-tab" onclick="showPanel('vedic',this)">Vedic</button>
-      <button class="sys-tab" onclick="showPanel('chinese',this)">Bazi / Chinese</button>
-      <button class="sys-tab" onclick="showPanel('saju',this)">Saju / Korean</button>
-      <button class="sys-tab" onclick="showPanel('numerology',this)">Numerology</button>
-      <button class="sys-tab" onclick="showPanel('ai',this)">AI Oracle</button>
+  <div class="service-strip" id="service-strip">
+    <div class="svc-card" onclick="navigate('horoscope')">
+      <div class="svc-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <circle cx="14" cy="14" r="5"/>
+          <line x1="14" y1="2" x2="14" y2="6"/><line x1="14" y1="22" x2="14" y2="26"/>
+          <line x1="2" y1="14" x2="6" y2="14"/><line x1="22" y1="14" x2="26" y2="14"/>
+          <line x1="5.5" y1="5.5" x2="8.3" y2="8.3"/><line x1="19.7" y1="19.7" x2="22.5" y2="22.5"/>
+          <line x1="22.5" y1="5.5" x2="19.7" y2="8.3"/><line x1="8.3" y1="19.7" x2="5.5" y2="22.5"/>
+        </svg>
+      </div>
+      <div class="svc-title">Daily Horoscope</div>
+      <div class="svc-sub">Your cosmic weather today</div>
     </div>
+    <div class="svc-card" onclick="navigate('chart')">
+      <div class="svc-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <circle cx="14" cy="14" r="12"/><circle cx="14" cy="14" r="6"/>
+          <line x1="14" y1="2" x2="14" y2="8"/><line x1="14" y1="20" x2="14" y2="26"/>
+          <line x1="2" y1="14" x2="8" y2="14"/><line x1="20" y1="14" x2="26" y2="14"/>
+        </svg>
+      </div>
+      <div class="svc-title">Birth Chart</div>
+      <div class="svc-sub">Five traditions, one portrait</div>
+    </div>
+    <div class="svc-card" onclick="navigate('tarot')">
+      <div class="svc-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <rect x="7" y="3" width="14" height="22" rx="1"/>
+          <line x1="10" y1="9" x2="18" y2="9"/><line x1="10" y1="13" x2="18" y2="13"/>
+          <line x1="10" y1="17" x2="15" y2="17"/>
+        </svg>
+      </div>
+      <div class="svc-title">Tarot</div>
+      <div class="svc-sub">The cards speak plainly</div>
+    </div>
+    <div class="svc-card" onclick="navigate('compatibility')">
+      <div class="svc-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <circle cx="9" cy="14" r="6"/><circle cx="19" cy="14" r="6"/>
+        </svg>
+      </div>
+      <div class="svc-title">Synastry</div>
+      <div class="svc-sub">Cosmic compatibility</div>
+    </div>
+    <div class="svc-card" onclick="navigate('numerology')">
+      <div class="svc-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <path d="M8 6 L12 4 L12 24"/><path d="M16 10 Q16 6 20 6 Q24 6 24 10 Q24 14 16 18 L24 18"/>
+          <line x1="16" y1="22" x2="24" y2="22"/>
+        </svg>
+      </div>
+      <div class="svc-title">Numerology</div>
+      <div class="svc-sub">The numbers of your soul</div>
+    </div>
+  </div>
+</div>
 
-    <div class="panel active" id="panel-western">
-      <div class="section">
-        <div class="sec-title">Sun · Moon · Rising</div>
-        <div class="big3" id="big3"></div>
-        <div class="sec-title">Elements</div>
-        <div id="elements"></div>
-        <div class="sec-title" style="margin-top:1.25rem">All Planets</div>
-        <div class="planet-grid" id="planets"></div>
+
+<!-- ═══════════ SIGN DETAIL PAGE ═══════════ -->
+<div class="page" id="page-sign">
+  <div class="sign-detail-inner">
+    <button class="back-link" onclick="navigate('home')">
+      <svg width="12" height="10" viewBox="0 0 12 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="5,1 1,5 5,9"/><line x1="1" y1="5" x2="11" y2="5"/></svg>
+      All Signs
+    </button>
+    <div class="sd-hero">
+      <div class="sd-glyph-circle" id="sd-glyph-circle"></div>
+      <div>
+        <p class="sd-tag" id="sd-tag"></p>
+        <h1 class="sd-name" id="sd-name"></h1>
+        <p class="sd-dates" id="sd-dates"></p>
+        <p class="sd-ruler" id="sd-ruler"></p>
+        <div class="sd-traits" id="sd-traits"></div>
       </div>
     </div>
-
-    <div class="panel" id="panel-vedic">
-      <div class="section">
-        <div class="sec-title">Nakshatra</div>
-        <div class="nak-box" id="nakshatra"></div>
-        <div class="sec-title">Vedic Signs</div>
-        <div id="vedic-signs" style="font-size:15px;color:var(--muted);line-height:2"></div>
+    <div class="sd-divider"></div>
+    <div class="sd-grid">
+      <div class="sd-block">
+        <p class="sd-block-title">The Essence</p>
+        <p class="sd-block-text" id="sd-essence"></p>
+      </div>
+      <div class="sd-block">
+        <p class="sd-block-title">In Love</p>
+        <p class="sd-block-text" id="sd-love"></p>
+      </div>
+      <div class="sd-block">
+        <p class="sd-block-title">The Shadow</p>
+        <p class="sd-block-text" id="sd-shadow"></p>
+      </div>
+      <div class="sd-block">
+        <p class="sd-block-title">Most Compatible With</p>
+        <div class="compat-tags" id="sd-compat"></div>
       </div>
     </div>
-
-    <div class="panel" id="panel-chinese">
-      <div class="section">
-        <div class="sec-title">四柱 Four Pillars (Bazi)</div>
-        <div class="pillars" id="bazi"></div>
-      </div>
-    </div>
-
-    <div class="panel" id="panel-saju">
-      <div class="section">
-        <div class="sec-title">사주 Saju — Day Master</div>
-        <div style="padding:1.25rem;background:var(--surface2);border-radius:10px;border:1px solid var(--border)">
-          <div style="font-size:11px;color:var(--dim);font-family:'Cinzel',serif;letter-spacing:0.1em;margin-bottom:8px">DAY MASTER (일간)</div>
-          <div style="font-size:24px;font-weight:300;color:var(--gold2)" id="day-master"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="panel" id="panel-numerology">
-      <div class="section" style="text-align:center">
-        <div class="sec-title">Life Path Number</div>
-        <div class="lp-num" id="lp-num"></div>
-        <div class="lp-label" id="lp-label"></div>
-      </div>
-    </div>
-
-    <div class="panel" id="panel-ai">
-      <div class="ai-section">
-        <div class="sec-title">✦ Oracle Reading</div>
-        <div id="ai-content"><div class="ai-loading"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div style="margin-top:8px">The oracle reads the stars...</div></div></div>
-      </div>
-      <div class="section" style="margin-top:1rem">
-        <div class="sec-title">Ask the Oracle</div>
-        <div class="chat-msgs" id="chat-msgs"></div>
-        <div class="chat-row">
-          <input type="text" id="chat-input" placeholder="Ask about love, career, destiny..." onkeydown="if(event.key==='Enter')sendChat()">
-          <button class="chat-send" id="chat-btn" onclick="sendChat()">Ask ✦</button>
+    <div class="ai-block">
+      <p class="ai-label" id="sd-ai-label">Celeste on this Sign</p>
+      <div id="sd-ai-content">
+        <div class="ai-loading">
+          <svg class="ai-spinner" width="36" height="36" viewBox="0 0 36 36" fill="currentColor">
+            <path d="M18 2 L19.4 16.6 L33 18 L19.4 19.4 L18 34 L16.6 19.4 L3 18 L16.6 16.6 Z"/>
+          </svg>
+          <p class="ai-loading-txt">The oracle reads...</p>
         </div>
       </div>
     </div>
   </div>
 </div>
 
+<!-- ═══════════ DAILY HOROSCOPE PAGE ═══════════ -->
+<div class="page" id="page-horoscope">
+  <div class="page-inner">
+    <p class="page-eyebrow">Daily Oracle</p>
+    <h1 class="page-title">Today's Cosmic Weather</h1>
+    <div class="page-divider"></div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="h-sign">Your Sun Sign</label>
+        <select id="h-sign">
+          <option value="">Select your sign</option>
+          <option>Aries</option><option>Taurus</option><option>Gemini</option>
+          <option>Cancer</option><option>Leo</option><option>Virgo</option>
+          <option>Libra</option><option>Scorpio</option><option>Sagittarius</option>
+          <option>Capricorn</option><option>Aquarius</option><option>Pisces</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="h-focus">Focus Area (optional)</label>
+        <input type="text" id="h-focus" placeholder="Love, career, spirit...">
+      </div>
+    </div>
+    <button class="btn-submit" id="h-btn" onclick="readHoroscope()">Read Today's Stars</button>
+
+    <div class="results-section" id="h-results">
+      <div class="ai-block">
+        <p class="ai-label" id="h-ai-label">Today's Reading</p>
+        <div id="h-ai-content">
+          <div class="ai-loading">
+            <svg class="ai-spinner" width="36" height="36" viewBox="0 0 36 36" fill="currentColor">
+              <path d="M18 2 L19.4 16.6 L33 18 L19.4 19.4 L18 34 L16.6 19.4 L3 18 L16.6 16.6 Z"/>
+            </svg>
+            <p class="ai-loading-txt">The oracle reads...</p>
+          </div>
+        </div>
+      </div>
+      <div class="chat-block">
+        <p class="chat-label">Ask the Oracle</p>
+        <div class="chat-msgs" id="h-chat-msgs"></div>
+        <div class="chat-input-row">
+          <input type="text" id="h-chat-input" placeholder="Ask about your day, your path, your heart..." onkeydown="if(event.key==='Enter')sendHoroChat()">
+          <button class="chat-send" id="h-chat-btn" onclick="sendHoroChat()">Ask</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ BIRTH CHART PAGE ═══════════ -->
+<div class="page" id="page-chart">
+  <div class="page-inner">
+    <p class="page-eyebrow">Birth Chart</p>
+    <h1 class="page-title">My Cosmic Blueprint</h1>
+    <div class="page-divider"></div>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label for="c-name">Your Name (optional)</label>
+        <input type="text" id="c-name" placeholder="For a personal reading">
+      </div>
+      <div class="form-group">
+        <label for="c-date">Date of Birth</label>
+        <input type="date" id="c-date">
+      </div>
+      <div class="form-group">
+        <label for="c-time">Time of Birth (local time)</label>
+        <input type="time" id="c-time" value="12:00">
+      </div>
+      <div class="form-group full">
+        <label>City of Birth</label>
+        <div class="city-wrap">
+          <input type="text" id="c-city" placeholder="Type any city in the world..." autocomplete="off"
+            oninput="onCityInput('c')" onkeydown="onCityKey(event,'c')">
+          <div class="suggestions-box" id="c-sug"></div>
+        </div>
+        <div class="city-status" id="c-city-status"></div>
+        <input type="hidden" id="c-lat">
+        <input type="hidden" id="c-lon">
+      </div>
+    </div>
+    <button class="btn-submit" id="c-btn" onclick="calcChart()">Reveal My Blueprint</button>
+
+    <div class="results-section" id="c-results">
+      <!-- Western -->
+      <div class="r-block">
+        <p class="r-label">Western Astrology</p>
+        <div class="big3-grid" id="c-big3"></div>
+        <p class="r-label">Elemental Balance</p>
+        <div class="elements-chart" id="c-elements"></div>
+        <p class="r-label">All Planets</p>
+        <div class="planet-grid" id="c-planets"></div>
+      </div>
+      <!-- Vedic -->
+      <div class="r-block">
+        <p class="r-label">Vedic · Jyotish</p>
+        <div class="vedic-grid" id="c-vedic"></div>
+      </div>
+      <!-- Bazi -->
+      <div class="r-block">
+        <p class="r-label">Bazi · Four Pillars</p>
+        <div class="pillars" id="c-pillars"></div>
+      </div>
+      <!-- AI Reading -->
+      <div class="ai-block">
+        <p class="ai-label" id="c-ai-label">Oracle Reading</p>
+        <div id="c-ai-content">
+          <div class="ai-loading">
+            <svg class="ai-spinner" width="36" height="36" viewBox="0 0 36 36" fill="currentColor">
+              <path d="M18 2 L19.4 16.6 L33 18 L19.4 19.4 L18 34 L16.6 19.4 L3 18 L16.6 16.6 Z"/>
+            </svg>
+            <p class="ai-loading-txt">The oracle reads...</p>
+          </div>
+        </div>
+      </div>
+      <!-- Chat -->
+      <div class="chat-block">
+        <p class="chat-label">Ask the Oracle</p>
+        <div class="chat-msgs" id="c-chat-msgs"></div>
+        <div class="chat-input-row">
+          <input type="text" id="c-chat-input" placeholder="Ask about your path, relationships, destiny..." onkeydown="if(event.key==='Enter')sendChartChat()">
+          <button class="chat-send" id="c-chat-btn" onclick="sendChartChat()">Ask</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ TAROT PAGE ═══════════ -->
+<div class="page" id="page-tarot">
+  <div class="page-inner">
+    <p class="page-eyebrow">Tarot &amp; Cartomancy</p>
+    <h1 class="page-title">The Cards Speak</h1>
+    <div class="page-divider"></div>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label for="t-question">Your Question</label>
+        <input type="text" id="t-question" placeholder="What do you seek guidance on?">
+      </div>
+      <div class="form-group">
+        <label>Spread</label>
+        <div class="spread-selector">
+          <button class="spread-btn active" data-spread="1" onclick="selectSpread(1,this)">Single Card</button>
+          <button class="spread-btn" data-spread="3" onclick="selectSpread(3,this)">Past · Present · Future</button>
+          <button class="spread-btn" data-spread="5" onclick="selectSpread(5,this)">Full Reading</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="t-sign">Sun Sign (optional)</label>
+        <select id="t-sign">
+          <option value="">Any sign</option>
+          <option>Aries</option><option>Taurus</option><option>Gemini</option>
+          <option>Cancer</option><option>Leo</option><option>Virgo</option>
+          <option>Libra</option><option>Scorpio</option><option>Sagittarius</option>
+          <option>Capricorn</option><option>Aquarius</option><option>Pisces</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-submit" id="t-btn" onclick="drawCards()">Draw the Cards</button>
+
+    <div class="results-section" id="t-results">
+      <div class="tarot-spread" id="t-spread"></div>
+      <div class="ai-block">
+        <p class="ai-label">The Reading</p>
+        <div id="t-ai-content">
+          <div class="ai-loading">
+            <svg class="ai-spinner" width="36" height="36" viewBox="0 0 36 36" fill="currentColor">
+              <path d="M18 2 L19.4 16.6 L33 18 L19.4 19.4 L18 34 L16.6 19.4 L3 18 L16.6 16.6 Z"/>
+            </svg>
+            <p class="ai-loading-txt">The cards reveal...</p>
+          </div>
+        </div>
+      </div>
+      <div class="chat-block">
+        <p class="chat-label">Ask About the Cards</p>
+        <div class="chat-msgs" id="t-chat-msgs"></div>
+        <div class="chat-input-row">
+          <input type="text" id="t-chat-input" placeholder="Ask about a specific card or your reading..." onkeydown="if(event.key==='Enter')sendTarotChat()">
+          <button class="chat-send" id="t-chat-btn" onclick="sendTarotChat()">Ask</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ COMPATIBILITY PAGE ═══════════ -->
+<div class="page" id="page-compatibility">
+  <div class="page-inner">
+    <p class="page-eyebrow">Synastry</p>
+    <h1 class="page-title">Cosmic Compatibility</h1>
+    <div class="page-divider"></div>
+    <div class="compat-forms">
+      <div>
+        <p class="compat-form-label">First Person</p>
+        <div class="form-grid">
+          <div class="form-group full">
+            <label for="p1-name">Name</label>
+            <input type="text" id="p1-name" placeholder="Name">
+          </div>
+          <div class="form-group">
+            <label for="p1-date">Date of Birth</label>
+            <input type="date" id="p1-date">
+          </div>
+          <div class="form-group">
+            <label for="p1-time">Time of Birth</label>
+            <input type="time" id="p1-time" value="12:00">
+          </div>
+          <div class="form-group full">
+            <label>City of Birth</label>
+            <div class="city-wrap">
+              <input type="text" id="p1-city" placeholder="City..." autocomplete="off"
+                oninput="onCityInput('p1')" onkeydown="onCityKey(event,'p1')">
+              <div class="suggestions-box" id="p1-sug"></div>
+            </div>
+            <div class="city-status" id="p1-city-status"></div>
+            <input type="hidden" id="p1-lat">
+            <input type="hidden" id="p1-lon">
+          </div>
+        </div>
+      </div>
+      <div>
+        <p class="compat-form-label">Second Person</p>
+        <div class="form-grid">
+          <div class="form-group full">
+            <label for="p2-name">Name</label>
+            <input type="text" id="p2-name" placeholder="Name">
+          </div>
+          <div class="form-group">
+            <label for="p2-date">Date of Birth</label>
+            <input type="date" id="p2-date">
+          </div>
+          <div class="form-group">
+            <label for="p2-time">Time of Birth</label>
+            <input type="time" id="p2-time" value="12:00">
+          </div>
+          <div class="form-group full">
+            <label>City of Birth</label>
+            <div class="city-wrap">
+              <input type="text" id="p2-city" placeholder="City..." autocomplete="off"
+                oninput="onCityInput('p2')" onkeydown="onCityKey(event,'p2')">
+              <div class="suggestions-box" id="p2-sug"></div>
+            </div>
+            <div class="city-status" id="p2-city-status"></div>
+            <input type="hidden" id="p2-lat">
+            <input type="hidden" id="p2-lon">
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="btn-submit" id="compat-btn" onclick="calcCompatibility()">Read Our Stars Together</button>
+
+    <div class="results-section" id="compat-results">
+      <div class="compat-score-wrap">
+        <span class="compat-score" id="compat-score-num"></span>
+        <p class="compat-score-label" id="compat-score-label"></p>
+      </div>
+      <div class="ai-block">
+        <p class="ai-label">Synastry Reading</p>
+        <div id="compat-ai-content">
+          <div class="ai-loading">
+            <svg class="ai-spinner" width="36" height="36" viewBox="0 0 36 36" fill="currentColor">
+              <path d="M18 2 L19.4 16.6 L33 18 L19.4 19.4 L18 34 L16.6 19.4 L3 18 L16.6 16.6 Z"/>
+            </svg>
+            <p class="ai-loading-txt">Reading the stars between you...</p>
+          </div>
+        </div>
+      </div>
+      <div class="chat-block">
+        <p class="chat-label">Ask the Oracle</p>
+        <div class="chat-msgs" id="compat-chat-msgs"></div>
+        <div class="chat-input-row">
+          <input type="text" id="compat-chat-input" placeholder="Ask about your connection..." onkeydown="if(event.key==='Enter')sendCompatChat()">
+          <button class="chat-send" id="compat-chat-btn" onclick="sendCompatChat()">Ask</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ NUMEROLOGY PAGE ═══════════ -->
+<div class="page" id="page-numerology">
+  <div class="page-inner">
+    <p class="page-eyebrow">Numerology</p>
+    <h1 class="page-title">The Numbers of Your Soul</h1>
+    <div class="page-divider"></div>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label for="n-name">Full Name at Birth</label>
+        <input type="text" id="n-name" placeholder="As it appears on your birth certificate">
+      </div>
+      <div class="form-group">
+        <label for="n-date">Date of Birth</label>
+        <input type="date" id="n-date">
+      </div>
+      <div class="form-group">
+        <label for="n-focus">Focus Area</label>
+        <select id="n-focus">
+          <option value="life path and destiny">Life Path &amp; Destiny</option>
+          <option value="love and relationships">Love &amp; Relationships</option>
+          <option value="career and purpose">Career &amp; Purpose</option>
+          <option value="spiritual growth">Spiritual Growth</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn-submit" id="n-btn" onclick="readNumerology()">Reveal My Numbers</button>
+
+    <div class="results-section" id="n-results">
+      <div class="num-cards" id="n-cards"></div>
+      <div class="ai-block">
+        <p class="ai-label">Oracle Reading</p>
+        <div id="n-ai-content">
+          <div class="ai-loading">
+            <svg class="ai-spinner" width="36" height="36" viewBox="0 0 36 36" fill="currentColor">
+              <path d="M18 2 L19.4 16.6 L33 18 L19.4 19.4 L18 34 L16.6 19.4 L3 18 L16.6 16.6 Z"/>
+            </svg>
+            <p class="ai-loading-txt">The numbers speak...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end #main -->
+
 <script>
-// Stars
-(function(){const c=document.getElementById('stars');for(let i=0;i<100;i++){const s=document.createElement('div');s.className='star';const sz=Math.random()*2+0.5;s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${2+Math.random()*4}s;--min:${0.05+Math.random()*0.1};--max:${0.4+Math.random()*0.5};animation-delay:${Math.random()*4}s`;c.appendChild(s)}})();
+// ═══════════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════════
 
-const GLYPHS={Sun:'☉',Moon:'☽',Mercury:'☿',Venus:'♀',Mars:'♂',Jupiter:'♃',Saturn:'♄',Uranus:'♅',Neptune:'♆',Pluto:'♇','North Node':'☊','South Node':'☋',Ascendant:'AC',Midheaven:'MC'};
-const ECOLORS={Fire:'#f87171',Earth:'#c9a84c',Air:'#c4b5fd',Water:'#5eead4'};
+const SIGNS_ORDER = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
 
-let chartData=null,chatHistory=[];
+const ELEMENTS = {Aries:'Fire',Taurus:'Earth',Gemini:'Air',Cancer:'Water',Leo:'Fire',Virgo:'Earth',Libra:'Air',Scorpio:'Water',Sagittarius:'Fire',Capricorn:'Earth',Aquarius:'Air',Pisces:'Water'};
 
-// ── CITY SEARCH via backend ──────────────────────────────────────────────────
-let cityTimer=null,suggestions=[],hiIdx=-1;
+const ELEMENT_COLORS = {Fire:'#d4806a',Earth:'#9a7a3f',Air:'#7b6fbe',Water:'#6dbfad'};
 
-function onCityInput(){
-  const q=document.getElementById('city-input').value.trim();
-  document.getElementById('lat').value='';
-  document.getElementById('lon').value='';
-  document.getElementById('city-status').textContent='';
-  document.getElementById('city-status').className='city-status';
-  clearTimeout(cityTimer);
-  if(q.length<2){hideSug();return}
-  cityTimer=setTimeout(()=>fetchCities(q),400);
+const SIGNS_DATA = {
+  Aries:{dates:'Mar 21 – Apr 19',element:'Fire',modality:'Cardinal',ruler:'Mars',traits:['Bold','Passionate','Driven','Courageous','Impulsive'],essence:'Aries arrives as the cosmos exhales spring — urgent, electric, and utterly convinced that now is the only moment that has ever mattered. This is the sign of pure beginning, of the self discovering itself through action.',love:'In love, Aries burns with an intensity that can be mistaken for impatience but is really a form of devotion. They must feel the chase, the spark, the early heat that precedes all things.',shadow:'The Ram\'s shadow lives in the gap between impulse and consequence. When the fire burns unchecked, it consumes what it loves.',compatible:['Leo','Sagittarius','Gemini','Aquarius']},
+  Taurus:{dates:'Apr 20 – May 20',element:'Earth',modality:'Fixed',ruler:'Venus',traits:['Steadfast','Sensual','Patient','Loyal','Stubborn'],essence:'Taurus is the earth in bloom — patient, pleasure-loving, and profoundly committed to what is real and beautiful. Where Aries ignites, Taurus cultivates, tending to beauty as though it were a living obligation.',love:'Taurus loves slowly, deliberately, and without apology. They are the partner who remembers every preference, who creates sanctuary from ordinary materials.',shadow:'The Bull\'s shadow is possessiveness and resistance to change. They may hold onto what has outgrown its season rather than trust the cycle.',compatible:['Virgo','Capricorn','Cancer','Pisces']},
+  Gemini:{dates:'May 21 – Jun 20',element:'Air',modality:'Mutable',ruler:'Mercury',traits:['Curious','Witty','Versatile','Expressive','Restless'],essence:'Gemini is the mind made visible — endlessly curious, delightfully contradictory, forever discovering that the world is more layered than any single perspective can contain.',love:'In love, Gemini needs a companion for every chamber of their mind. They are tender and playful, offering the gift of being truly, vitally interesting.',shadow:'The Twin\'s shadow is the scattering of self — beginning without completing, charming without committing, knowing without feeling.',compatible:['Libra','Aquarius','Aries','Leo']},
+  Cancer:{dates:'Jun 21 – Jul 22',element:'Water',modality:'Cardinal',ruler:'Moon',traits:['Nurturing','Intuitive','Protective','Sensitive','Devoted'],essence:'Cancer carries the ocean within — tidal, mysterious, shaped entirely by what it cannot see. This is the sign of memory and home, of the love that builds a world out of feeling.',love:'Cancer loves as the tide loves the shore — returning always, wearing down walls with patience rather than force. They offer the rarest thing: a love that remembers everything.',shadow:'The Crab\'s shadow is the armor that becomes a prison. Fear of being swept away causes them to retreat when they most need to remain.',compatible:['Scorpio','Pisces','Taurus','Virgo']},
+  Leo:{dates:'Jul 23 – Aug 22',element:'Fire',modality:'Fixed',ruler:'Sun',traits:['Radiant','Generous','Creative','Loyal','Proud'],essence:'Leo is the sun knowing it is the sun — warm, commanding, and genuinely convinced that joy is a form of generosity. This is the sign of the heart expressed without apology.',love:'Leo loves with theatrical grandeur and absolute loyalty. They are the partner who celebrates you publicly and protects you privately.',shadow:'The Lion\'s shadow is the wound beneath the performance — the pride that masks an aching need to be seen as more than golden.',compatible:['Aries','Sagittarius','Gemini','Libra']},
+  Virgo:{dates:'Aug 23 – Sep 22',element:'Earth',modality:'Mutable',ruler:'Mercury',traits:['Discerning','Diligent','Analytical','Humble','Precise'],essence:'Virgo is devotion in motion — quietly extraordinary, finding meaning in the particular, believing that care is the highest form of love. This sign holds the world together through attention.',love:'Virgo loves through service, through noticing, through the ten thousand small acts that no one tallies but that make a life possible.',shadow:'The Maiden\'s shadow is the inner critic turned outward — the perfectionism that withholds love until conditions that never arrive are met.',compatible:['Taurus','Capricorn','Cancer','Scorpio']},
+  Libra:{dates:'Sep 23 – Oct 22',element:'Air',modality:'Cardinal',ruler:'Venus',traits:['Harmonious','Gracious','Fair','Charming','Indecisive'],essence:'Libra is beauty as a moral position — the conviction that balance, proportion, and justice are not ideals but necessities. This sign lives in the space between opposites, holding them in exquisite tension.',love:'Libra loves with elegance and sincerity, seeking a mirror that reflects the best version of both people.',shadow:'The Scales\' shadow is the avoidance of conflict at the cost of truth — the smile that hides the unanswered question.',compatible:['Gemini','Aquarius','Leo','Sagittarius']},
+  Scorpio:{dates:'Oct 23 – Nov 21',element:'Water',modality:'Fixed',ruler:'Pluto',traits:['Intense','Perceptive','Magnetic','Loyal','Secretive'],essence:'Scorpio descends where others cannot — into the underworld of feeling, through the chambers of transformation, emerging not unscathed but illuminated. This is the sign of death that becomes renewal.',love:'Scorpio loves with the totality of a thing that has decided. They offer a depth of feeling that can alter the landscape of another person\'s life.',shadow:'The Scorpion\'s shadow is the sting turned inward — the self-destruction that arises when transformation is resisted.',compatible:['Cancer','Pisces','Virgo','Capricorn']},
+  Sagittarius:{dates:'Nov 22 – Dec 21',element:'Fire',modality:'Mutable',ruler:'Jupiter',traits:['Expansive','Philosophical','Adventurous','Honest','Restless'],essence:'Sagittarius is the arrow already in flight — aimed at truth, at meaning, at the horizon that keeps retreating. This sign experiences the world as an infinite library and the self as its most devoted reader.',love:'Sagittarius loves freely and philosophically, offering the rare gift of allowing another to remain entirely themselves.',shadow:'The Archer\'s shadow is the refusal to land — the horizon-chasing that prevents the depth that only stillness allows.',compatible:['Aries','Leo','Libra','Aquarius']},
+  Capricorn:{dates:'Dec 22 – Jan 19',element:'Earth',modality:'Cardinal',ruler:'Saturn',traits:['Ambitious','Disciplined','Resilient','Practical','Reserved'],essence:'Capricorn is time made patient — the understanding that what is worth having requires the full weight of one\'s intention over the full span of one\'s commitment. This is the sign of mastery earned.',love:'Capricorn loves with the gravity of someone who does not take lightly what they choose to keep. Their devotion is structural, foundational, built to last.',shadow:'The Sea-Goat\'s shadow is the fortress of competence behind which the tender, uncertain self hides from the risk of being known.',compatible:['Taurus','Virgo','Scorpio','Pisces']},
+  Aquarius:{dates:'Jan 20 – Feb 18',element:'Air',modality:'Fixed',ruler:'Uranus',traits:['Visionary','Independent','Humanitarian','Original','Detached'],essence:'Aquarius arrives from the future — bearing ideas that the present is not yet ready for, seeing humanity as a single project still in its early draft. This is the sign of the revolutionary who loves in theory and struggles with the particular.',love:'Aquarius loves the idea of love with magnificent clarity and sometimes needs reminding that love happens in bodies, in kitchens, in ordinary Tuesday mornings.',shadow:'The Water-Bearer\'s shadow is the emotional distance that presents itself as objectivity — the longing for connection that is sabotaged by its own conditions.',compatible:['Gemini','Libra','Sagittarius','Aries']},
+  Pisces:{dates:'Feb 19 – Mar 20',element:'Water',modality:'Mutable',ruler:'Neptune',traits:['Empathic','Intuitive','Creative','Compassionate','Boundless'],essence:'Pisces is the ocean before it knew it was the ocean — undifferentiated, luminous, and capable of taking any shape while remaining entirely itself. This is the sign of dissolution, of mystical reunion, of the self remembered as wave rather than water.',love:'Pisces loves without edges — with an empathy that feels another\'s joy as their own joy and another\'s wound as their own wound.',shadow:'The Fish\'s shadow is the escape into dream when the shore grows too solid, the self-sacrifice that forgets there is a self to sacrifice.',compatible:['Cancer','Scorpio','Taurus','Capricorn']}
+};
+
+// Zodiac SVG glyphs (viewBox 0 0 40 40, stroke currentColor 2.5, no fill)
+const ZODIAC_SVG = {
+  Aries:`<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 30 L20 16 M10 9 Q10 16 20 16 Q30 16 30 9"/></svg>`,
+  Taurus:`<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="20" cy="24" r="9"/><path d="M11 19 Q11 10 20 10 Q29 10 29 19"/></svg>`,
+  Gemini:`<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="13" y1="8" x2="13" y2="32"/><line x1="27" y1="8" x2="27" y2="32"/><path d="M13 8 Q20 12 27 8"/><path d="M13 32 Q20 28 27 32"/></svg>`,
+  Cancer:`<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M29 15 Q34 15 34 20 Q34 26 27 26 Q20 26 20 20 M11 25 Q6 25 6 20 Q6 14 13 14 Q20 14 20 20"/></svg>`,
+  Leo:`<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="15" cy="17" r="7"/><path d="M22 17 Q30 15 31 22 Q32 29 26 31 Q22 32 20 29"/></svg>`,
+  Virgo:`<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="8" x2="10" y2="26"/><line x1="19" y1="8" x2="19" y2="26"/><path d="M10 26 Q10 33 16 33 Q22 33 22 26 Q22 21 28 19 Q32 18 32 13 Q32 8 27 8 Q22 8 21 14"/><path d="M10 15 Q14 9 19 15"/></svg>`,
+  Libra:`<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="32" x2="33" y2="32"/><path d="M10 26 Q10 14 20 14 Q30 14 30 26"/><line x1="20" y1="14" x2="20" y2="8"/></svg>`,
+  Scorpio:`<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="10" x2="8" y2="24"/><line x1="18" y1="10" x2="18" y2="24"/><line x1="28" y1="10" x2="28" y2="24"/><path d="M8 24 Q8 32 13 32 Q18 32 18 24 M18 24 Q18 32 23 32 Q28 32 28 28 L33 33"/><line x1="29" y1="29" x2="33" y2="33"/><line x1="28" y1="33" x2="33" y2="33"/></svg>`,
+  Sagittarius:`<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="30" x2="30" y2="10"/><polyline points="18,10 30,10 30,22"/><line x1="8" y1="20" x2="20" y2="20"/></svg>`,
+  Capricorn:`<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 8 L8 26 Q8 33 14 33 Q18 33 20 28 Q22 24 20 20 Q18 16 14 16 Q10 16 10 20"/><path d="M20 20 Q22 13 28 11 Q35 9 35 17 Q35 24 30 27 Q26 29 24 27"/></svg>`,
+  Aquarius:`<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 17 Q11 13 15 17 Q19 21 23 17 Q27 13 33 17"/><path d="M7 24 Q11 20 15 24 Q19 28 23 24 Q27 20 33 24"/></svg>`,
+  Pisces:`<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="20" y1="7" x2="20" y2="33"/><path d="M20 7 Q10 12 10 20 Q10 28 20 33"/><path d="M20 7 Q30 12 30 20 Q30 28 20 33"/><line x1="14" y1="20" x2="26" y2="20"/></svg>`
+};
+
+// Planet SVG glyphs (viewBox 0 0 16 16, stroke currentColor 1.5)
+const PLANET_SVG = {
+  Sun:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="8" r="4.5"/><circle cx="8" cy="8" r="1" fill="currentColor" stroke="none"/></svg>`,
+  Moon:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 4 Q5 5 4.5 8 Q4 11 7 13 Q4 12 3 9.5 Q2 6.5 5 4.5 Q7.5 2.5 10 4Z"/></svg>`,
+  Mercury:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="9" r="3.5"/><line x1="8" y1="12.5" x2="8" y2="15"/><line x1="5.5" y1="14" x2="10.5" y2="14"/><path d="M5 8 Q5 4 8 4 Q11 4 11 8"/></svg>`,
+  Venus:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="6" r="4"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="5.5" y1="12.5" x2="10.5" y2="12.5"/></svg>`,
+  Mars:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="9" r="4"/><line x1="10" y1="6" x2="14" y2="2"/><polyline points="11,2 14,2 14,5"/></svg>`,
+  Jupiter:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 3 L5 13 M5 8 Q9 7 9 10 Q9 13 7 14"/><line x1="3" y1="11" x2="13" y2="11"/></svg>`,
+  Saturn:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 2 L8 14 M8 8 Q11 7 11 10 Q11 13 8 14"/><line x1="5.5" y1="4" x2="10.5" y2="4"/></svg>`,
+  Uranus:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="10" r="3.5"/><line x1="8" y1="2" x2="8" y2="6.5"/><circle cx="8" cy="2" r="1" fill="currentColor" stroke="none"/><line x1="4" y1="4" x2="4" y2="7.5"/><line x1="12" y1="4" x2="12" y2="7.5"/></svg>`,
+  Neptune:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="4" y1="6" x2="4" y2="14"/><line x1="8" y1="2" x2="8" y2="14"/><line x1="12" y1="6" x2="12" y2="14"/><path d="M4 6 Q8 3 12 6"/><line x1="4" y1="10" x2="12" y2="10"/></svg>`,
+  Pluto:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="10" r="3"/><path d="M5 6 Q5 3 8 3 Q11 3 11 6"/><line x1="8" y1="13" x2="8" y2="15"/><line x1="5.5" y1="15" x2="10.5" y2="15"/></svg>`,
+  'North Node':`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 3 Q3 3 3 8 Q3 11 6 12.5 M8 3 Q13 3 13 8 Q13 11 10 12.5"/><line x1="5.5" y1="13" x2="10.5" y2="13"/><line x1="8" y1="13" x2="8" y2="15"/></svg>`,
+  'South Node':`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 13 Q3 13 3 8 Q3 5 6 3.5 M8 13 Q13 13 13 8 Q13 5 10 3.5"/><line x1="5.5" y1="3" x2="10.5" y2="3"/><line x1="8" y1="1" x2="8" y2="3"/></svg>`,
+  Ascendant:`<svg viewBox="0 0 16 16" fill="currentColor" stroke="none"><text x="8" y="11.5" text-anchor="middle" font-size="6.5" font-family="sans-serif" font-weight="bold">AC</text></svg>`,
+  Midheaven:`<svg viewBox="0 0 16 16" fill="currentColor" stroke="none"><text x="8" y="11.5" text-anchor="middle" font-size="6.5" font-family="sans-serif" font-weight="bold">MC</text></svg>`
+};
+
+// 78-card tarot deck
+const MAJOR_ARCANA = [
+  {name:'The Fool',sign:'Aquarius'},{name:'The Magician',sign:'Gemini'},{name:'The High Priestess',sign:'Cancer'},
+  {name:'The Empress',sign:'Taurus'},{name:'The Emperor',sign:'Aries'},{name:'The Hierophant',sign:'Taurus'},
+  {name:'The Lovers',sign:'Gemini'},{name:'The Chariot',sign:'Cancer'},{name:'Strength',sign:'Leo'},
+  {name:'The Hermit',sign:'Virgo'},{name:'Wheel of Fortune',sign:'Sagittarius'},{name:'Justice',sign:'Libra'},
+  {name:'The Hanged Man',sign:'Pisces'},{name:'Death',sign:'Scorpio'},{name:'Temperance',sign:'Sagittarius'},
+  {name:'The Devil',sign:'Capricorn'},{name:'The Tower',sign:'Aries'},{name:'The Star',sign:'Aquarius'},
+  {name:'The Moon',sign:'Pisces'},{name:'The Sun',sign:'Leo'},{name:'Judgement',sign:'Scorpio'},
+  {name:'The World',sign:'Capricorn'}
+];
+const SUITS = ['Wands','Cups','Swords','Pentacles'];
+const RANKS = ['Ace','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Page','Knight','Queen','King'];
+const SUIT_SIGNS = {Wands:'Sagittarius',Cups:'Pisces',Swords:'Aquarius',Pentacles:'Taurus'};
+
+const TAROT_DECK = [...MAJOR_ARCANA, ...SUITS.flatMap(suit => RANKS.map(rank => ({name:`${rank} of ${suit}`,sign:SUIT_SIGNS[suit]})))];
+
+const SPREAD_LABELS = {
+  1: ['Present'],
+  3: ['Past','Present','Future'],
+  5: ['Foundation','Crossing','Past','Future','Outcome']
+};
+
+// Numerology
+const LP_MEANINGS = {
+  1:'The Leader',2:'The Diplomat',3:'The Creator',4:'The Builder',5:'The Free Spirit',
+  6:'The Nurturer',7:'The Seeker',8:'The Achiever',9:'The Humanitarian',
+  11:'The Spiritual Messenger',22:'The Master Builder',33:'The Master Teacher'
+};
+
+// State
+let currentPage = 'home';
+let currentSign = null;
+let chartData1 = null, chartData2 = null;
+let chatHistories = {horoscope:[], chart:[], tarot:[], compat:[]};
+let selectedSpread = 1;
+let drawnCards = [];
+let cityTimers = {};
+let citySuggestions = {};
+let cityHiIdx = {};
+
+// ═══════════════════════════════════════════════════════════════
+// CURSOR
+// ═══════════════════════════════════════════════════════════════
+
+const cursorDot = document.getElementById('cursor-dot');
+const cursorRing = document.getElementById('cursor-ring');
+let ringX = 0, ringY = 0, dotX = 0, dotY = 0;
+
+document.addEventListener('mousemove', e => {
+  dotX = e.clientX; dotY = e.clientY;
+  cursorDot.style.transform = `translate(${dotX}px,${dotY}px) translate(-50%,-50%)`;
+});
+
+(function ringLoop() {
+  ringX += (dotX - ringX) * 0.15;
+  ringY += (dotY - ringY) * 0.15;
+  cursorRing.style.transform = `translate(${ringX}px,${ringY}px) translate(-50%,-50%) scale(${document.body.classList.contains('cursor-hover') ? 1.35 : 1})`;
+  requestAnimationFrame(ringLoop);
+})();
+
+document.querySelectorAll('a,button,.sign-btn,.svc-card,.tarot-card,.compat-tag,.sp-link').forEach(el => {
+  el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+  el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+});
+
+// Dynamic hover detection for dynamically created elements
+document.addEventListener('mouseover', e => {
+  if (e.target.closest('a,button,.sign-btn,.svc-card,.tarot-card,.compat-tag')) {
+    document.body.classList.add('cursor-hover');
+  }
+});
+document.addEventListener('mouseout', e => {
+  if (e.target.closest('a,button,.sign-btn,.svc-card,.tarot-card,.compat-tag')) {
+    document.body.classList.remove('cursor-hover');
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════
+// COSMOS CANVAS
+// ═══════════════════════════════════════════════════════════════
+
+(function initCosmos() {
+  const canvas = document.getElementById('cosmos');
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const stars = Array.from({length:220}, () => ({
+    x: Math.random(), y: Math.random(),
+    size: Math.pow(Math.random(), 2.5) * 2.2 + 0.3,
+    opacity: Math.random() * 0.6 + 0.15,
+    phase: Math.random() * Math.PI * 2,
+    speed: 0.003 + Math.random() * 0.008
+  }));
+
+  const nebulae = [
+    {x:0.12,y:0.18,r:0.28,col:'rgba(123,111,190,0.055)'},
+    {x:0.82,y:0.72,r:0.22,col:'rgba(109,191,173,0.04)'},
+    {x:0.55,y:0.45,r:0.18,col:'rgba(200,168,107,0.03)'}
+  ];
+
+  let shootingTimer = 0;
+  let shooter = null;
+
+  function spawnShooting() {
+    const side = Math.random() < 0.5 ? 'top' : 'right';
+    shooter = {
+      x: side === 'top' ? Math.random() * 0.7 : 1.05,
+      y: side === 'top' ? -0.02 : Math.random() * 0.4,
+      vx: side === 'top' ? 0.006 + Math.random() * 0.004 : -(0.007 + Math.random() * 0.004),
+      vy: side === 'top' ? 0.006 + Math.random() * 0.004 : 0.006 + Math.random() * 0.004,
+      life: 1, trail: []
+    };
+  }
+
+  let frame = 0;
+  function draw(ts) {
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    // Nebulae
+    nebulae.forEach(n => {
+      const g = ctx.createRadialGradient(n.x*W, n.y*H, 0, n.x*W, n.y*H, n.r*W);
+      g.addColorStop(0, n.col); g.addColorStop(1, 'transparent');
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    });
+
+    // Stars
+    stars.forEach(s => {
+      const op = s.opacity * (0.7 + 0.3 * Math.sin(ts * s.speed + s.phase));
+      ctx.beginPath();
+      ctx.arc(s.x * W, s.y * H, s.size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(242,237,228,${op})`;
+      ctx.fill();
+    });
+
+    // Shooting star
+    frame++;
+    if (!shooter && frame % 300 === 0) spawnShooting();
+    if (shooter) {
+      shooter.trail.unshift({x: shooter.x, y: shooter.y, life: shooter.life});
+      if (shooter.trail.length > 16) shooter.trail.pop();
+      shooter.x += shooter.vx; shooter.y += shooter.vy; shooter.life -= 0.04;
+      if (shooter.life <= 0 || shooter.x > 1.1 || shooter.y > 1.1) shooter = null;
+      else {
+        shooter.trail.forEach((p, i) => {
+          ctx.beginPath();
+          ctx.arc(p.x * W, p.y * H, 1.2 * (1 - i / shooter.trail.length), 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(200,168,107,${p.life * (1 - i / shooter.trail.length) * 0.7})`;
+          ctx.fill();
+        });
+      }
+    }
+
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// ROUTING / NAV
+// ═══════════════════════════════════════════════════════════════
+
+function navigate(page, data) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+
+  const target = document.getElementById(`page-${page}`);
+  if (!target) return;
+
+  target.classList.add('active');
+  currentPage = page;
+
+  const navMap = {horoscope:'horoscope',chart:'chart',tarot:'tarot',compatibility:'compatibility',numerology:'numerology'};
+  const links = document.querySelectorAll('.nav-links a');
+  links.forEach(a => {
+    const txt = a.textContent.toLowerCase().replace(/\s/g,'');
+    if (navMap[page] && (txt.includes(page) || (page==='compatibility' && txt.includes('synastry')))) {
+      a.classList.add('active');
+    }
+  });
+
+  window.scrollTo(0, 0);
+  document.getElementById('nav-links').classList.remove('open');
+
+  if (page === 'sign' && data) loadSignDetail(data);
 }
 
-async function fetchCities(q){
-  document.getElementById('city-status').textContent='Searching...';
-  try{
-    const res=await fetch(`/geocode?city=${encodeURIComponent(q)}`);
-    const data=await res.json();
-    suggestions=data.filter(r=>r.lat&&r.lon);
-    renderSug(suggestions);
-    document.getElementById('city-status').textContent=suggestions.length?'':'No city found. Try again.';
-  }catch(e){
-    document.getElementById('city-status').textContent='Search error. Try again.';
+function toggleNav() {
+  document.getElementById('nav-links').classList.toggle('open');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ZODIAC WHEEL
+// ═══════════════════════════════════════════════════════════════
+
+function buildWheel() {
+  const wrap = document.getElementById('wheel-wrap');
+  if (!wrap) return;
+  const size = wrap.offsetWidth;
+  const cx = size / 2, cy = size / 2;
+  const radius = size * 0.42;
+
+  // Remove old buttons
+  wrap.querySelectorAll('.sign-btn').forEach(b => b.remove());
+
+  SIGNS_ORDER.forEach((sign, i) => {
+    const angleDeg = i * 30 - 90;
+    const angleRad = angleDeg * Math.PI / 180;
+    const x = cx + radius * Math.cos(angleRad);
+    const y = cy + radius * Math.sin(angleRad);
+
+    const btn = document.createElement('button');
+    btn.className = 'sign-btn';
+    btn.style.left = x + 'px';
+    btn.style.top = y + 'px';
+    btn.setAttribute('aria-label', sign);
+    btn.innerHTML = ZODIAC_SVG[sign].replace('viewBox="0 0 40 40"', 'width="24" height="24" viewBox="0 0 40 40"');
+
+    btn.addEventListener('mouseenter', () => showWheelSign(sign));
+    btn.addEventListener('mouseleave', () => hideWheelSign());
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.sign-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      showSignPanel(sign);
+    });
+    btn.addEventListener('focus', () => showWheelSign(sign));
+
+    wrap.appendChild(btn);
+  });
+}
+
+function showWheelSign(sign) {
+  const d = SIGNS_DATA[sign];
+  document.getElementById('wc-default').style.opacity = '0';
+  const ws = document.getElementById('wc-sign');
+  document.getElementById('wcs-glyph').innerHTML = ZODIAC_SVG[sign].replace('viewBox="0 0 40 40"', 'width="40" height="40" viewBox="0 0 40 40"');
+  document.getElementById('wcs-name').textContent = sign;
+  document.getElementById('wcs-dates').textContent = d.dates;
+  ws.classList.add('show');
+}
+
+function hideWheelSign() {
+  document.getElementById('wc-default').style.opacity = '1';
+  document.getElementById('wc-sign').classList.remove('show');
+}
+
+function showSignPanel(sign) {
+  const d = SIGNS_DATA[sign];
+  currentSign = sign;
+  const panel = document.getElementById('sign-panel');
+
+  document.getElementById('sp-tag').textContent = `${d.element} · ${d.modality}`;
+  document.getElementById('sp-name').textContent = sign;
+  document.getElementById('sp-dates').textContent = d.dates;
+  document.getElementById('sp-ruler').textContent = `Ruled by ${d.ruler}`;
+  document.getElementById('sp-traits').innerHTML = d.traits.map(t => `<span class="sp-trait">${t}</span>`).join('');
+  document.getElementById('sp-essence').textContent = d.essence;
+
+  const link = document.getElementById('sp-link');
+  link.onclick = () => navigate('sign', sign);
+
+  panel.classList.add('show');
+}
+
+// Debounced resize
+let wheelResizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(wheelResizeTimer);
+  wheelResizeTimer = setTimeout(buildWheel, 200);
+});
+
+// ═══════════════════════════════════════════════════════════════
+// CITY AUTOCOMPLETE (shared factory)
+// ═══════════════════════════════════════════════════════════════
+
+function onCityInput(prefix) {
+  const q = document.getElementById(`${prefix}-city`).value.trim();
+  document.getElementById(`${prefix}-lat`).value = '';
+  document.getElementById(`${prefix}-lon`).value = '';
+  const status = document.getElementById(`${prefix}-city-status`);
+  status.textContent = ''; status.className = 'city-status';
+  clearTimeout(cityTimers[prefix]);
+  if (q.length < 2) { hideSug(prefix); return; }
+  cityTimers[prefix] = setTimeout(() => fetchCities(prefix, q), 400);
+}
+
+async function fetchCities(prefix, q) {
+  const status = document.getElementById(`${prefix}-city-status`);
+  status.textContent = 'Searching...';
+  try {
+    const res = await fetch(`/geocode?city=${encodeURIComponent(q)}`);
+    const data = await res.json();
+    citySuggestions[prefix] = data.filter(r => r.lat && r.lon);
+    renderSug(prefix, citySuggestions[prefix]);
+    if (!citySuggestions[prefix].length) status.textContent = 'No results found.';
+    else status.textContent = '';
+  } catch(e) {
+    status.textContent = 'Search error. Try again.';
+    status.className = 'city-status err';
   }
 }
 
-function renderSug(items){
-  const box=document.getElementById('suggestions');
-  if(!items.length){hideSug();return}
-  box.innerHTML=items.map((r,i)=>`<div class="sug-item" onclick="selectCity(${i})" onmouseover="setHi(${i})">${r.label}</div>`).join('');
-  box.style.display='block';hiIdx=-1;
+function renderSug(prefix, items) {
+  const box = document.getElementById(`${prefix}-sug`);
+  if (!items.length) { hideSug(prefix); return; }
+  box.innerHTML = items.map((r, i) => `<div class="sug-item" onclick="selectCity('${prefix}',${i})" onmouseover="setHi('${prefix}',${i})">${r.label}</div>`).join('');
+  box.style.display = 'block';
+  cityHiIdx[prefix] = -1;
 }
 
-function hideSug(){document.getElementById('suggestions').style.display='none';suggestions=[];hiIdx=-1}
-
-function setHi(i){hiIdx=i;document.querySelectorAll('.sug-item').forEach((el,j)=>el.classList.toggle('hi',j===i))}
-
-function selectCity(i){
-  const r=suggestions[i];if(!r)return;
-  document.getElementById('city-input').value=r.label;
-  document.getElementById('lat').value=r.lat;
-  document.getElementById('lon').value=r.lon;
-  document.getElementById('city-status').textContent=`✦ ${r.label}`;
-  document.getElementById('city-status').className='city-status city-ok';
-  hideSug();
+function hideSug(prefix) {
+  const box = document.getElementById(`${prefix}-sug`);
+  if (box) { box.style.display = 'none'; }
+  citySuggestions[prefix] = [];
+  cityHiIdx[prefix] = -1;
 }
 
-function onCityKey(e){
-  const items=document.querySelectorAll('.sug-item');if(!items.length)return;
-  if(e.key==='ArrowDown'){e.preventDefault();setHi(Math.min(hiIdx+1,items.length-1))}
-  else if(e.key==='ArrowUp'){e.preventDefault();setHi(Math.max(hiIdx-1,0))}
-  else if(e.key==='Enter'&&hiIdx>=0){e.preventDefault();selectCity(hiIdx)}
-  else if(e.key==='Escape')hideSug();
+function setHi(prefix, i) {
+  cityHiIdx[prefix] = i;
+  document.querySelectorAll(`#${prefix}-sug .sug-item`).forEach((el, j) => el.classList.toggle('hi', j === i));
 }
-document.addEventListener('click',e=>{if(!e.target.closest('#city-input')&&!e.target.closest('#suggestions'))hideSug()});
 
-// ── CHART CALCULATION ────────────────────────────────────────────────────────
-async function calcChart(){
-  const dateStr=document.getElementById('birth-date').value;
-  const timeStr=document.getElementById('birth-time').value||'12:00';
-  const lat=parseFloat(document.getElementById('lat').value);
-  const lon=parseFloat(document.getElementById('lon').value);
+function selectCity(prefix, i) {
+  const r = (citySuggestions[prefix] || [])[i];
+  if (!r) return;
+  document.getElementById(`${prefix}-city`).value = r.label;
+  document.getElementById(`${prefix}-lat`).value = r.lat;
+  document.getElementById(`${prefix}-lon`).value = r.lon;
+  const status = document.getElementById(`${prefix}-city-status`);
+  status.textContent = r.label;
+  status.className = 'city-status ok';
+  hideSug(prefix);
+}
 
-  if(!dateStr){alert('Please enter your date of birth');return}
-  if(isNaN(lat)||isNaN(lon)){
-    document.getElementById('city-status').textContent='Please select a city from the list.';
-    document.getElementById('city-status').className='city-status city-err';
+function onCityKey(e, prefix) {
+  const items = document.querySelectorAll(`#${prefix}-sug .sug-item`);
+  if (!items.length) return;
+  const hi = cityHiIdx[prefix] || -1;
+  if (e.key === 'ArrowDown') { e.preventDefault(); setHi(prefix, Math.min(hi + 1, items.length - 1)); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); setHi(prefix, Math.max(hi - 1, 0)); }
+  else if (e.key === 'Enter' && hi >= 0) { e.preventDefault(); selectCity(prefix, hi); }
+  else if (e.key === 'Escape') hideSug(prefix);
+}
+
+document.addEventListener('click', e => {
+  ['c','p1','p2'].forEach(prefix => {
+    if (!e.target.closest(`#${prefix}-city`) && !e.target.closest(`#${prefix}-sug`)) hideSug(prefix);
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
+// NUMEROLOGY CALCULATIONS (client-side)
+// ═══════════════════════════════════════════════════════════════
+
+function reduceNum(n) {
+  while (n > 9 && ![11,22,33].includes(n)) {
+    n = String(n).split('').reduce((s,d) => s + parseInt(d), 0);
+  }
+  return n;
+}
+
+function calcLifePath(dateStr) {
+  const digits = dateStr.replace(/-/g,'').split('').map(Number);
+  return reduceNum(digits.reduce((s,d) => s+d, 0));
+}
+
+function letterValue(ch) {
+  const c = ch.toLowerCase();
+  if (c < 'a' || c > 'z') return 0;
+  return c.charCodeAt(0) - 96;
+}
+
+function calcExpression(name) {
+  const total = name.toUpperCase().replace(/[^A-Z]/g,'').split('').reduce((s,c) => s + letterValue(c), 0);
+  return reduceNum(total);
+}
+
+function calcSoulUrge(name) {
+  const vowels = 'aeiou';
+  const total = name.toLowerCase().replace(/[^a-z]/g,'').split('').filter(c => vowels.includes(c)).reduce((s,c) => s + letterValue(c), 0);
+  return reduceNum(total || 1);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// COMPATIBILITY SCORE
+// ═══════════════════════════════════════════════════════════════
+
+function compatScore(chart1, chart2) {
+  const EC = {'Fire-Fire':28,'Earth-Earth':28,'Air-Air':28,'Water-Water':28,
+    'Fire-Air':24,'Air-Fire':24,'Earth-Water':24,'Water-Earth':24,
+    'Fire-Earth':14,'Earth-Fire':14,'Air-Water':14,'Water-Air':14,
+    'Fire-Water':10,'Water-Fire':10,'Earth-Air':10,'Air-Earth':10};
+  const e1 = ELEMENTS[chart1.sun_sign] || 'Fire';
+  const e2 = ELEMENTS[chart2.sun_sign] || 'Fire';
+  const me1 = ELEMENTS[chart1.moon_sign] || 'Water';
+  const me2 = ELEMENTS[chart2.moon_sign] || 'Water';
+
+  const sunEl = EC[`${e1}-${e2}`] || 16;
+  const moonEl = EC[`${me1}-${me2}`] || 16;
+  const sameSign = chart1.sun_sign === chart2.sun_sign ? 4 : 0;
+  const risEl = EC[`${ELEMENTS[chart1.rising_sign]||e1}-${ELEMENTS[chart2.rising_sign]||e2}`] || 16;
+  const raw = sunEl + moonEl + sameSign + risEl * 0.5;
+  const maxRaw = 28 + 28 + 4 + 14;
+  const seed = (chart1.sun_sign.length + chart2.sun_sign.length + chart1.moon_sign.length) % 12;
+  return Math.min(99, Math.max(8, Math.round(raw / maxRaw * 84) + seed + 3));
+}
+
+function compatLabel(score) {
+  if (score >= 88) return 'Twin Flames';
+  if (score >= 76) return 'Soulmates';
+  if (score >= 64) return 'Deep Connection';
+  if (score >= 52) return 'Strong Harmony';
+  if (score >= 40) return 'Complementary Souls';
+  return 'Growth Through Contrast';
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// SIGN DETAIL PAGE
+// ═══════════════════════════════════════════════════════════════
+
+function loadSignDetail(sign) {
+  const d = SIGNS_DATA[sign];
+  if (!d) return;
+  currentSign = sign;
+
+  document.getElementById('sd-glyph-circle').innerHTML = ZODIAC_SVG[sign].replace('viewBox="0 0 40 40"', 'width="80" height="80" viewBox="0 0 40 40"');
+  document.getElementById('sd-tag').textContent = `${d.element} · ${d.modality}`;
+  document.getElementById('sd-name').textContent = sign;
+  document.getElementById('sd-dates').textContent = d.dates;
+  document.getElementById('sd-ruler').textContent = `Ruled by ${d.ruler}`;
+  document.getElementById('sd-traits').innerHTML = d.traits.map(t => `<span class="sd-trait">${t}</span>`).join('');
+  document.getElementById('sd-essence').textContent = d.essence;
+  document.getElementById('sd-love').textContent = d.love;
+  document.getElementById('sd-shadow').textContent = d.shadow;
+  document.getElementById('sd-compat').innerHTML = d.compatible.map(s => `<button class="compat-tag" onclick="navigate('sign','${s}')">${s}</button>`).join('');
+  document.getElementById('sd-ai-label').textContent = `Celeste on ${sign}`;
+
+  showAILoading('sd-ai-content');
+  callOracle(
+    `You are Celeste, an oracle who has studied astrology across millennia. Write a deep, poetic essay of 4 paragraphs about the sign of ${sign}. Explore its mythological roots, psychological archetype, the gift it brings to the world, and the spiritual lesson it carries. Use beautiful, literary language. No bullet points. Do not begin with the word "${sign}". Write as though addressing someone who carries this sign's energy.`,
+    [{role:'user',content:`Write a deep astrological reading for the sign of ${sign}.`}],
+    'sd-ai-content'
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
+// DAILY HOROSCOPE
+// ═══════════════════════════════════════════════════════════════
+
+async function readHoroscope() {
+  const sign = document.getElementById('h-sign').value;
+  const focus = document.getElementById('h-focus').value.trim() || 'general life guidance';
+  if (!sign) { alert('Please select your sun sign.'); return; }
+
+  const btn = document.getElementById('h-btn');
+  btn.disabled = true; btn.textContent = 'Reading the stars...';
+
+  const today = new Date().toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  document.getElementById('h-results').classList.add('show');
+  document.getElementById('h-ai-label').textContent = `${sign} · ${today}`;
+  showAILoading('h-ai-content');
+  chatHistories.horoscope = [];
+
+  const sys = `You are Celeste, an ancient oracle. Today is ${today}. Speak with warmth, mystery, and genuine wisdom. Never say you are an AI.`;
+  const prompt = `Write a personal daily horoscope for ${sign} focused on ${focus}. Today is ${today}. Speak directly to the person, in second person. 3 rich paragraphs. Literary, intimate language. No bullet points. No emojis.`;
+
+  chatHistories.horoscope = [{role:'user',content:prompt}];
+  await callOracle(sys, chatHistories.horoscope, 'h-ai-content');
+
+  btn.disabled = false; btn.textContent = 'Read Today\'s Stars';
+  window.scrollTo({top: document.getElementById('h-results').offsetTop - 100, behavior:'smooth'});
+}
+
+async function sendHoroChat() {
+  await sendChat('h', 'horoscope', `You are Celeste, an oracle. You have just delivered today\'s horoscope reading. Continue with wisdom.`);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BIRTH CHART
+// ═══════════════════════════════════════════════════════════════
+
+async function calcChart() {
+  const dateStr = document.getElementById('c-date').value;
+  const timeStr = document.getElementById('c-time').value || '12:00';
+  const lat = parseFloat(document.getElementById('c-lat').value);
+  const lon = parseFloat(document.getElementById('c-lon').value);
+
+  if (!dateStr) { alert('Please enter your date of birth.'); return; }
+  if (isNaN(lat) || isNaN(lon)) {
+    const s = document.getElementById('c-city-status');
+    s.textContent = 'Please select a city from the list.'; s.className = 'city-status err';
     return;
   }
 
-  const[yr,mo,day]=dateStr.split('-').map(Number);
-  const[hh,mm]=timeStr.split(':').map(Number);
-  const hour=hh+(mm||0)/60;
+  const [yr, mo, day] = dateStr.split('-').map(Number);
+  const [hh, mm] = timeStr.split(':').map(Number);
+  const hour = hh + (mm || 0) / 60;
+  const btn = document.getElementById('c-btn');
+  btn.disabled = true; btn.textContent = 'Reading the heavens...';
 
-  document.getElementById('calc-btn').disabled=true;
-  document.getElementById('calc-btn').textContent='Calculating...';
-
-  try{
-    const res=await fetch('/chart',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({year:yr,month:mo,day,hour,lat,lon})
+  try {
+    const res = await fetch('/chart', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({year:yr, month:mo, day, hour, lat, lon})
     });
-    chartData=await res.json();
-    chartData.meta={name:document.getElementById('name').value.trim(),yr,mo,day,hour,lat,lon};
-    renderResults();
-    document.getElementById('results').style.display='block';
-    document.getElementById('calc-btn').textContent='✦ RECALCULATE ✦';
-    setTimeout(()=>generateReading(),300);
-  }catch(e){
+    chartData1 = await res.json();
+    chartData1.meta = {name: document.getElementById('c-name').value.trim(), yr, mo, day, hour, lat, lon};
+
+    renderChartResults(chartData1);
+    document.getElementById('c-results').classList.add('show');
+    chatHistories.chart = [];
+    generateChartReading(chartData1);
+    window.scrollTo({top: document.getElementById('c-results').offsetTop - 100, behavior:'smooth'});
+  } catch(e) {
     alert('Calculation error. Please try again.');
-    document.getElementById('calc-btn').textContent='✦ REVEAL MY COSMIC BLUEPRINT ✦';
   }
-  document.getElementById('calc-btn').disabled=false;
+  btn.disabled = false; btn.textContent = 'Reveal My Blueprint';
 }
 
-// ── RENDER ───────────────────────────────────────────────────────────────────
-function renderResults(){
-  const d=chartData;
+function renderChartResults(d) {
   // Big 3
-  document.getElementById('big3').innerHTML=
-    [`☉ Sun · ${d.sun_sign}`,`☽ Moon · ${d.moon_sign}`,`⬆ Rising · ${d.rising_sign}`]
-    .map(s=>`<div class="big3-card">${s}</div>`).join('');
+  const big3 = [
+    {planet:'Sun', sign:d.sun_sign},
+    {planet:'Moon', sign:d.moon_sign},
+    {planet:'Rising', sign:d.rising_sign}
+  ];
+  document.getElementById('c-big3').innerHTML = big3.map(p => `
+    <div class="big3-card">
+      <p class="b3-planet">${p.planet}</p>
+      <div class="b3-symbol">${PLANET_SVG[p.planet] || ''}</div>
+      <p class="b3-sign">${p.sign}</p>
+    </div>`).join('');
 
   // Elements
-  const max=Math.max(...Object.values(d.elements),1);
-  document.getElementById('elements').innerHTML=
-    Object.entries(d.elements).map(([el,cnt])=>
-      `<div class="bal-row"><span class="bal-label">${el}</span><div class="bal-track"><div class="bal-fill" style="width:${cnt/max*100}%;background:${ECOLORS[el]}"></div></div><span class="bal-count">${cnt}</span></div>`
-    ).join('');
+  const max = Math.max(...Object.values(d.elements), 1);
+  document.getElementById('c-elements').innerHTML = Object.entries(d.elements).map(([el, cnt]) => `
+    <div class="el-row">
+      <span class="el-label">${el}</span>
+      <div class="el-track"><div class="el-fill" style="width:${cnt/max*100}%;background:${ELEMENT_COLORS[el]}"></div></div>
+      <span class="el-count">${cnt}</span>
+    </div>`).join('');
 
   // Planets
-  document.getElementById('planets').innerHTML=
-    Object.entries(d.planets).filter(([n])=>n!=='South Node').map(([n,p])=>
-      `<div class="planet-row"><span class="p-glyph">${GLYPHS[n]||'·'}</span><span class="p-name">${n}</span><span class="p-pos">${p.degree}° ${p.sign}</span>${p.house?`<span class="p-house">H${p.house}</span>`:''}</div>`
-    ).join('');
+  const showPlanets = ['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto','North Node','Ascendant','Midheaven'];
+  document.getElementById('c-planets').innerHTML = showPlanets.map(name => {
+    const p = d.planets[name];
+    if (!p) return '';
+    return `<div class="planet-row">
+      <span class="p-glyph">${PLANET_SVG[name] || ''}</span>
+      <span class="p-name">${name}</span>
+      <span class="p-pos">${p.degree}° ${p.sign}</span>
+      ${p.house ? `<span class="p-house">H${p.house}</span>` : ''}
+    </div>`;
+  }).join('');
 
   // Vedic
-  const v=d.vedic;
-  document.getElementById('nakshatra').innerHTML=`<div class="nak-name">${v.nakshatra.name}</div><div class="nak-meta">Pada ${v.nakshatra.pada} · Lord: ${v.nakshatra.lord}</div>`;
-  document.getElementById('vedic-signs').innerHTML=`Sun (Vedic): <strong style="color:var(--gold2)">${v.sun_sign}</strong> &nbsp;|&nbsp; Moon (Vedic): <strong style="color:var(--gold2)">${v.moon_sign}</strong><br>Ayanamsha: ${v.ayanamsha}°`;
+  const v = d.vedic;
+  document.getElementById('c-vedic').innerHTML = `
+    <div class="vedic-card">
+      <p class="vc-label">Sun (Vedic)</p>
+      <p class="vc-value">${v.sun_sign}</p>
+    </div>
+    <div class="vedic-card">
+      <p class="vc-label">Moon (Vedic)</p>
+      <p class="vc-value">${v.moon_sign}</p>
+    </div>
+    <div class="vedic-card">
+      <p class="vc-label">Nakshatra</p>
+      <p class="vc-value">${v.nakshatra.name}</p>
+      <p class="vc-sub">Pada ${v.nakshatra.pada} · Lord: ${v.nakshatra.lord}</p>
+    </div>
+    <div class="vedic-card">
+      <p class="vc-label">Ayanamsha</p>
+      <p class="vc-value">${v.ayanamsha}°</p>
+    </div>`;
 
   // Bazi
-  const c=d.chinese;
-  document.getElementById('bazi').innerHTML=[
-    {l:'Year',s:c.year.stem,b:c.year.branch},
-    {l:'Month',s:'—',b:'—'},
-    {l:'Day',s:c.day.stem,b:c.day.branch},
-    {l:'Hour',s:'—',b:'—'}
-  ].map(p=>`<div class="pillar"><div class="pillar-lbl">${p.l}</div><div class="pillar-stem">${p.s}</div><div class="pillar-branch">${p.b}</div></div>`).join('');
-
-  // Saju
-  document.getElementById('day-master').textContent=d.saju.day_master;
-
-  // Numerology
-  document.getElementById('lp-num').textContent=d.numerology.life_path.number;
-  document.getElementById('lp-label').textContent=d.numerology.life_path.label;
+  const c = d.chinese;
+  document.getElementById('c-pillars').innerHTML = [
+    {l:'Year', s:c.year.stem, b:c.year.branch},
+    {l:'Month', s:'—', b:'—'},
+    {l:'Day', s:c.day.stem, b:c.day.branch},
+    {l:'Hour', s:'—', b:'—'}
+  ].map(p => `<div class="pillar">
+    <p class="pillar-lbl">${p.l}</p>
+    <p class="pillar-stem">${p.s}</p>
+    <p class="pillar-branch">${p.b}</p>
+  </div>`).join('');
 }
 
-// ── AI READING ───────────────────────────────────────────────────────────────
-async function generateReading(){
-  if(!chartData)return;
-  const d=chartData;
-  const prompt=`Give a complete, poetic, and deeply personal astrological reading for ${d.meta.name||'this soul'}.
+async function generateChartReading(d) {
+  document.getElementById('c-ai-label').textContent = d.meta.name ? `Celeste on ${d.meta.name}` : 'Oracle Reading';
+  showAILoading('c-ai-content');
+  const lp = d.numerology.life_path;
+  const prompt = `Give a complete, poetic, deeply personal astrological reading synthesizing all systems.
 
-WESTERN: Sun ${d.sun_sign} (H${d.planets.Sun?.house}) | Moon ${d.moon_sign} (H${d.planets.Moon?.house}) | Rising ${d.rising_sign} | MC ${d.mc_sign}
-Mars ${d.planets.Mars?.sign} | Venus ${d.planets.Venus?.sign} | Mercury ${d.planets.Mercury?.sign} | Jupiter ${d.planets.Jupiter?.sign} | Saturn ${d.planets.Saturn?.sign}
-Elements: ${JSON.stringify(d.elements)}
+Western: Sun ${d.sun_sign} H${d.planets.Sun?.house} | Moon ${d.moon_sign} H${d.planets.Moon?.house} | Rising ${d.rising_sign} | MC ${d.mc_sign}
+Venus ${d.planets.Venus?.sign} | Mars ${d.planets.Mars?.sign} | Mercury ${d.planets.Mercury?.sign} | Jupiter ${d.planets.Jupiter?.sign} | Saturn ${d.planets.Saturn?.sign}
+Elements: Fire ${d.elements.Fire} Earth ${d.elements.Earth} Air ${d.elements.Air} Water ${d.elements.Water}
 
-VEDIC: Sun ${d.vedic.sun_sign} | Moon ${d.vedic.moon_sign} | Nakshatra ${d.vedic.nakshatra.name} Pada ${d.vedic.nakshatra.pada} (Lord: ${d.vedic.nakshatra.lord})
+Vedic: Sun ${d.vedic.sun_sign} | Moon ${d.vedic.moon_sign} | Nakshatra ${d.vedic.nakshatra.name} Pada ${d.vedic.nakshatra.pada} (Lord: ${d.vedic.nakshatra.lord})
+Bazi: Year of ${d.chinese.year.branch} (${d.chinese.year.stem}) | Day: ${d.chinese.day.stem} ${d.chinese.day.branch}
+Saju Day Master: ${d.saju.day_master}
+Numerology: Life Path ${lp.number} — ${lp.label}
 
-CHINESE BAZI: Year of ${d.chinese.year.branch} (${d.chinese.year.stem}) | Day: ${d.chinese.day.stem} ${d.chinese.day.branch}
+Write 4-5 rich paragraphs that synthesize all systems into a single poetic portrait. Find where the systems agree and where they reveal tension. Speak in second person, intimately.`;
 
-SAJU Day Master: ${d.saju.day_master}
-
-NUMEROLOGY: Life Path ${d.numerology.life_path.number} — ${d.numerology.life_path.label}
-
-Synthesize all systems into a poetic, insightful reading of 4-5 rich paragraphs. Find common themes across systems.`;
-
-  chatHistory=[{role:'user',content:prompt}];
-
-  try{
-    const res=await fetch('/oracle',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({system:`You are Celeste, an ancient oracle who has mastered all astrological systems. You speak with warmth, mysticism and genuine wisdom. Never say you are an AI.`,messages:chatHistory})
-    });
-    const data=await res.json();
-    const text=data.text||'The oracle is silent. Try again.';
-    document.getElementById('ai-content').innerHTML=`<div class="ai-text">${text}</div>`;
-    chatHistory.push({role:'assistant',content:text});
-  }catch(e){
-    document.getElementById('ai-content').innerHTML=`<div class="ai-loading">The stars are obscured. Try the AI Oracle tab again.</div>`;
-  }
+  chatHistories.chart = [{role:'user', content:prompt}];
+  await callOracle(`You are Celeste, an ancient oracle mastering all astrological systems. Speak with warmth and genuine depth. Never say you are an AI.`, chatHistories.chart, 'c-ai-content');
 }
 
-async function sendChat(){
-  const input=document.getElementById('chat-input');
-  const msg=input.value.trim();
-  if(!msg||!chartData)return;
-  input.value='';
-  document.getElementById('chat-btn').disabled=true;
-  const cm=document.getElementById('chat-msgs');
-  cm.innerHTML+=`<div class="msg-u"><div class="bubble b-u">${msg}</div></div>`;
-  const lid='l'+Date.now();
-  cm.innerHTML+=`<div class="msg-o" id="${lid}"><div class="bubble b-o"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div></div>`;
-  cm.scrollTop=cm.scrollHeight;
-  chatHistory.push({role:'user',content:msg});
-  try{
-    const res=await fetch('/oracle',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({system:`You are Celeste, an ancient oracle. You have just read this person's complete birth chart. Continue the conversation with wisdom and depth. Never say you are an AI.`,messages:chatHistory})
-    });
-    const data=await res.json();
-    const reply=data.text||'The oracle is silent.';
-    document.getElementById(lid).innerHTML=`<div class="bubble b-o">${reply}</div>`;
-    chatHistory.push({role:'assistant',content:reply});
-  }catch(e){
-    document.getElementById(lid).innerHTML=`<div class="bubble b-o">The connection wavers... Try again.</div>`;
-  }
-  cm.scrollTop=cm.scrollHeight;
-  document.getElementById('chat-btn').disabled=false;
-  input.focus();
+async function sendChartChat() {
+  await sendChat('c', 'chart', `You are Celeste, an ancient oracle. You have just read this person's complete birth chart across Western, Vedic, Bazi, and numerology traditions. Continue the conversation with depth and warmth. Never say you are an AI.`);
 }
 
-function showPanel(id,btn){
-  document.querySelectorAll('.sys-tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+// ═══════════════════════════════════════════════════════════════
+// TAROT
+// ═══════════════════════════════════════════════════════════════
+
+function selectSpread(n, btn) {
+  selectedSpread = n;
+  document.querySelectorAll('.spread-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById('panel-'+id).classList.add('active');
-  if(id==='ai'&&chartData&&!document.querySelector('.ai-text'))generateReading();
 }
+
+async function drawCards() {
+  const question = document.getElementById('t-question').value.trim();
+  if (!question) { alert('Please enter your question.'); return; }
+
+  const btn = document.getElementById('t-btn');
+  btn.disabled = true; btn.textContent = 'Drawing...';
+
+  // Shuffle and draw
+  const deck = [...TAROT_DECK].sort(() => Math.random() - 0.5);
+  drawnCards = deck.slice(0, selectedSpread).map(card => ({
+    ...card,
+    reversed: Math.random() < 0.28
+  }));
+
+  const labels = SPREAD_LABELS[selectedSpread];
+  const spread = document.getElementById('t-spread');
+  spread.innerHTML = '';
+
+  document.getElementById('t-results').classList.add('show');
+
+  // Stagger card reveal
+  drawnCards.forEach((card, i) => {
+    const div = document.createElement('div');
+    div.className = 'tarot-card';
+    div.innerHTML = `
+      <span class="tc-position">${labels[i]}</span>
+      <div class="tc-glyph">
+        ${ZODIAC_SVG[card.sign] ? ZODIAC_SVG[card.sign].replace('viewBox="0 0 40 40"', 'width="48" height="48" viewBox="0 0 40 40"') : ''}
+      </div>
+      <div>
+        <p class="tc-name">${card.name}</p>
+        ${card.reversed ? '<p class="tc-reversed">Reversed</p>' : ''}
+      </div>`;
+    spread.appendChild(div);
+
+    setTimeout(() => div.classList.add('show'), 150 * i);
+  });
+
+  showAILoading('t-ai-content');
+  chatHistories.tarot = [];
+
+  const cardDesc = drawnCards.map((c, i) => `${labels[i]}: ${c.name}${c.reversed ? ' (Reversed)' : ''}`).join(', ');
+  const prompt = `Read these tarot cards for someone asking: "${question}"\n\nCards drawn: ${cardDesc}\n\nInterpret each card in its position and weave them into a single narrative. 4 paragraphs. Poetic, direct. No bullet points.`;
+  chatHistories.tarot = [{role:'user', content:prompt}];
+
+  await callOracle(`You are Celeste, an ancient oracle and master of tarot. Speak with mystery and depth. Never say you are an AI.`, chatHistories.tarot, 't-ai-content');
+  btn.disabled = false; btn.textContent = 'Draw the Cards';
+}
+
+async function sendTarotChat() {
+  await sendChat('t', 'tarot', `You are Celeste, a master of tarot. You have just read the cards. Continue the conversation with depth. Never say you are an AI.`);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// COMPATIBILITY
+// ═══════════════════════════════════════════════════════════════
+
+async function calcCompatibility() {
+  const d1 = document.getElementById('p1-date').value;
+  const d2 = document.getElementById('p2-date').value;
+  const lat1 = parseFloat(document.getElementById('p1-lat').value);
+  const lon1 = parseFloat(document.getElementById('p1-lon').value);
+  const lat2 = parseFloat(document.getElementById('p2-lat').value);
+  const lon2 = parseFloat(document.getElementById('p2-lon').value);
+
+  if (!d1 || !d2) { alert('Please enter both dates of birth.'); return; }
+  if (isNaN(lat1) || isNaN(lon1)) {
+    const s = document.getElementById('p1-city-status');
+    s.textContent = 'Please select a city.'; s.className = 'city-status err'; return;
+  }
+  if (isNaN(lat2) || isNaN(lon2)) {
+    const s = document.getElementById('p2-city-status');
+    s.textContent = 'Please select a city.'; s.className = 'city-status err'; return;
+  }
+
+  const btn = document.getElementById('compat-btn');
+  btn.disabled = true; btn.textContent = 'Reading your stars together...';
+
+  function parseDateTime(dateStr, prefix) {
+    const [yr,mo,day] = dateStr.split('-').map(Number);
+    const timeStr = document.getElementById(`${prefix}-time`).value || '12:00';
+    const [hh,mm] = timeStr.split(':').map(Number);
+    return {yr, mo, day, hour: hh + (mm||0)/60};
+  }
+
+  const p1 = parseDateTime(d1,'p1');
+  const p2 = parseDateTime(d2,'p2');
+
+  try {
+    const [res1, res2] = await Promise.all([
+      fetch('/chart', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({year:p1.yr,month:p1.mo,day:p1.day,hour:p1.hour,lat:lat1,lon:lon1})}),
+      fetch('/chart', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({year:p2.yr,month:p2.mo,day:p2.day,hour:p2.hour,lat:lat2,lon:lon2})})
+    ]);
+
+    chartData1 = await res1.json();
+    chartData2 = await res2.json();
+    const name1 = document.getElementById('p1-name').value.trim() || 'Person One';
+    const name2 = document.getElementById('p2-name').value.trim() || 'Person Two';
+
+    const score = compatScore(chartData1, chartData2);
+    const label = compatLabel(score);
+
+    document.getElementById('compat-results').classList.add('show');
+    document.getElementById('compat-score-num').textContent = `${score}%`;
+    document.getElementById('compat-score-label').textContent = label;
+
+    showAILoading('compat-ai-content');
+    chatHistories.compat = [];
+
+    const prompt = `Perform a synastry reading between ${name1} and ${name2}.
+
+${name1}: Sun ${chartData1.sun_sign} | Moon ${chartData1.moon_sign} | Rising ${chartData1.rising_sign} | Venus ${chartData1.planets.Venus?.sign} | Mars ${chartData1.planets.Mars?.sign}
+${name2}: Sun ${chartData2.sun_sign} | Moon ${chartData2.moon_sign} | Rising ${chartData2.rising_sign} | Venus ${chartData2.planets.Venus?.sign} | Mars ${chartData2.planets.Mars?.sign}
+
+Compatibility score: ${score}% — ${label}
+
+Write 4-5 paragraphs exploring their love potential, how they communicate, what karmic lessons they share, where they challenge each other to grow. Poetic, specific, intimate.`;
+
+    chatHistories.compat = [{role:'user', content:prompt}];
+    await callOracle(`You are Celeste, an oracle of synastry and relationship astrology. Never say you are an AI.`, chatHistories.compat, 'compat-ai-content');
+
+    window.scrollTo({top: document.getElementById('compat-results').offsetTop - 100, behavior:'smooth'});
+  } catch(e) {
+    alert('Calculation error. Please try again.');
+  }
+  btn.disabled = false; btn.textContent = 'Read Our Stars Together';
+}
+
+async function sendCompatChat() {
+  await sendChat('compat', 'compat', `You are Celeste, an oracle of synastry. You have just analyzed this couple's charts. Continue with depth. Never say you are an AI.`);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// NUMEROLOGY
+// ═══════════════════════════════════════════════════════════════
+
+async function readNumerology() {
+  const name = document.getElementById('n-name').value.trim();
+  const dateStr = document.getElementById('n-date').value;
+  const focus = document.getElementById('n-focus').value;
+
+  if (!name) { alert('Please enter your full birth name.'); return; }
+  if (!dateStr) { alert('Please enter your date of birth.'); return; }
+
+  const btn = document.getElementById('n-btn');
+  btn.disabled = true; btn.textContent = 'Counting your numbers...';
+
+  const lp = calcLifePath(dateStr);
+  const expr = calcExpression(name);
+  const soul = calcSoulUrge(name);
+
+  const cards = [
+    {label:'Life Path', num:lp, desc:LP_MEANINGS[lp] || 'Mystical Path'},
+    {label:'Expression', num:expr, desc:LP_MEANINGS[expr] || 'The Communicator'},
+    {label:'Soul Urge', num:soul, desc:LP_MEANINGS[soul] || 'The Inner Voice'}
+  ];
+
+  document.getElementById('n-cards').innerHTML = cards.map(c => `
+    <div class="num-card">
+      <p class="nc-label">${c.label}</p>
+      <p class="nc-number">${c.num}</p>
+      <p class="nc-desc">${c.desc}</p>
+    </div>`).join('');
+
+  document.getElementById('n-results').classList.add('show');
+  showAILoading('n-ai-content');
+
+  const prompt = `Perform a numerology reading for ${name}.
+
+Life Path: ${lp} (${LP_MEANINGS[lp] || 'Mystical Path'})
+Expression Number: ${expr} (${LP_MEANINGS[expr] || 'The Communicator'})
+Soul Urge: ${soul} (${LP_MEANINGS[soul] || 'The Inner Voice'})
+Focus: ${focus}
+
+Write 4 paragraphs interpreting these numbers and how they interact, focused on ${focus}. Poetic, illuminating, personal.`;
+
+  await callOracle(`You are Celeste, an oracle who reads the sacred language of numbers. Speak with depth and warmth. Never say you are an AI.`,
+    [{role:'user', content:prompt}], 'n-ai-content');
+
+  btn.disabled = false; btn.textContent = 'Reveal My Numbers';
+  window.scrollTo({top: document.getElementById('n-results').offsetTop - 100, behavior:'smooth'});
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SHARED: ORACLE API CALL + STREAMING REVEAL
+// ═══════════════════════════════════════════════════════════════
+
+function showAILoading(containerId) {
+  document.getElementById(containerId).innerHTML = `
+    <div class="ai-loading">
+      <svg class="ai-spinner" width="36" height="36" viewBox="0 0 36 36" fill="currentColor">
+        <path d="M18 2 L19.4 16.6 L33 18 L19.4 19.4 L18 34 L16.6 19.4 L3 18 L16.6 16.6 Z"/>
+      </svg>
+      <p class="ai-loading-txt">The oracle reads...</p>
+    </div>`;
+}
+
+async function callOracle(system, messages, containerId) {
+  try {
+    const res = await fetch('/oracle', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({system, messages})
+    });
+    const data = await res.json();
+    const text = data.text || 'The oracle is silent. Please try again.';
+
+    // Add response to appropriate chat history
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg && lastMsg.role === 'user') messages.push({role:'assistant', content:text});
+
+    await revealOracle(containerId, text);
+    return text;
+  } catch(e) {
+    document.getElementById(containerId).innerHTML = `<div class="ai-loading"><p class="ai-loading-txt">The stars are obscured. Please try again.</p></div>`;
+    return null;
+  }
+}
+
+async function revealOracle(containerId, text) {
+  const container = document.getElementById(containerId);
+  const div = document.createElement('div');
+  div.className = 'ai-text';
+  container.innerHTML = '';
+  container.appendChild(div);
+
+  const paragraphs = text.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
+  const totalWords = text.split(' ').length;
+  const delay = Math.max(8, Math.min(25, Math.round(1400 / totalWords * 4)));
+
+  for (let pi = 0; pi < paragraphs.length; pi++) {
+    const p = document.createElement('p');
+    div.appendChild(p);
+    const words = paragraphs[pi].split(' ');
+    const chunkSize = 3;
+    for (let wi = 0; wi < words.length; wi += chunkSize) {
+      const chunk = words.slice(wi, wi + chunkSize).join(' ');
+      p.textContent += (wi === 0 ? '' : ' ') + chunk;
+      await sleep(delay);
+    }
+  }
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ═══════════════════════════════════════════════════════════════
+// SHARED CHAT
+// ═══════════════════════════════════════════════════════════════
+
+async function sendChat(prefix, historyKey, system) {
+  const inputEl = document.getElementById(`${prefix}-chat-input`);
+  const msg = inputEl.value.trim();
+  if (!msg) return;
+
+  inputEl.value = '';
+  const btn = document.getElementById(`${prefix}-chat-btn`);
+  btn.disabled = true;
+
+  const msgs = document.getElementById(`${prefix}-chat-msgs`);
+  msgs.innerHTML += `<div class="msg-user"><div class="bubble bubble-user">${escHtml(msg)}</div></div>`;
+
+  const lid = 'l' + Date.now();
+  msgs.innerHTML += `<div class="msg-oracle" id="${lid}"><div class="bubble bubble-oracle">
+    <div class="dots-loading"><div class="dl"></div><div class="dl"></div><div class="dl"></div></div>
+  </div></div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+
+  chatHistories[historyKey].push({role:'user', content:msg});
+
+  try {
+    const res = await fetch('/oracle', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({system, messages:chatHistories[historyKey]})
+    });
+    const data = await res.json();
+    const reply = data.text || 'The oracle is silent.';
+    chatHistories[historyKey].push({role:'assistant', content:reply});
+
+    const el = document.getElementById(lid);
+    el.innerHTML = `<div class="bubble bubble-oracle">${reply.replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>')}</div>`;
+  } catch(e) {
+    document.getElementById(lid).innerHTML = `<div class="bubble bubble-oracle">The connection wavers... please try again.</div>`;
+  }
+
+  msgs.scrollTop = msgs.scrollHeight;
+  btn.disabled = false;
+  inputEl.focus();
+}
+
+function escHtml(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INTERSECTION OBSERVER — SCROLL REVEALS
+// ═══════════════════════════════════════════════════════════════
+
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity='1'; e.target.style.transform='translateY(0)'; } });
+}, {threshold: 0.1});
+
+function observeReveal() {
+  document.querySelectorAll('.r-block, .ai-block, .chat-block, .num-card, .sd-block').forEach(el => {
+    el.style.opacity='0'; el.style.transform='translateY(16px)';
+    el.style.transition='opacity 0.6s ease, transform 0.6s ease';
+    revealObs.observe(el);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', () => {
+  buildWheel();
+  observeReveal();
+
+  // Set today's date as default where useful
+  const today = new Date().toISOString().slice(0,10);
+  ['c-date','p1-date','p2-date','n-date'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && !el.value) el.value = '';
+  });
+});
+
 </script>
 </body>
 </html>
